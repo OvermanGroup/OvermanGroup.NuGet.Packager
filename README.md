@@ -1,0 +1,2 @@
+OvermanGroup.NuGet.Packager
+===========================
