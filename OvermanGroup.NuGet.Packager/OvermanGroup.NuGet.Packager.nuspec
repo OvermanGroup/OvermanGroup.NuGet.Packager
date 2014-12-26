@@ -1,0 +1,23 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+	<metadata minClientVersion="2.8">
+		<id>$id$</id>
+		<title>$id$</title>
+		<version>$version$</version>
+		<description>$description$</description>
+		<tags>nuget tfs build msbuild</tags>
+		<authors>Overman Group, LLC.</authors>
+		<copyright>Copyright © 2014 Overman Group, LLC. All rights reserved.</copyright>
+		<projectUrl>https://github.com/OvermanGroup/OvermanGroup.NuGet.Packager</projectUrl>
+		<licenseUrl>https://raw.githubusercontent.com/OvermanGroup/OvermanGroup.NuGet.Packager/master/LICENSE</licenseUrl>
+		<requireLicenseAcceptance>true</requireLicenseAcceptance>
+		<developmentDependency>true</developmentDependency>
+		<dependencies>
+			<dependency id="NuGet.CommandLine" version="[2.8.3,)"/>
+		</dependencies>
+	</metadata>
+	<files>
+		<file src="OvermanGroup.NuGet.Packager.targets" target="build" />
+		<file src="OvermanGroup.NuGet.Packager.dll" target="build" />
+	</files>
+</package>

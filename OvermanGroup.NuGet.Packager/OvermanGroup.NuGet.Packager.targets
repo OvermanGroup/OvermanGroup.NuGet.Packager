@@ -1,0 +1,147 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+	<UsingTask TaskName="OvermanGroup.NuGet.Packager.Tasks.ResolveNuGetExePath" AssemblyFile="$(MSBuildThisFileDirectory).\OvermanGroup.NuGet.Packager.dll" />
+	<UsingTask TaskName="OvermanGroup.NuGet.Packager.Tasks.CreateNuGetPackage" AssemblyFile="$(MSBuildThisFileDirectory).\OvermanGroup.NuGet.Packager.dll" />
+	<UsingTask TaskName="OvermanGroup.NuGet.Packager.Tasks.PublishNuGetPackage" AssemblyFile="$(MSBuildThisFileDirectory).\OvermanGroup.NuGet.Packager.dll" />
+
+	<!--
+	http://blog.stangroome.com/2012/05/10/override-the-tfs-team-build-outdir-property-net-4-5/
+	-->
+	
+	<PropertyGroup>
+		<BuildDependsOn>
+			$(BuildDependsOn);
+			OverPack
+		</BuildDependsOn>
+	</PropertyGroup>
+
+	<PropertyGroup>
+		<OverPackImported>true</OverPackImported>
+
+		<RunOverPack Condition="'$(RunOverPack)'==''">false</RunOverPack>
+		<OverPackNuGetExePath Condition="'$(OverPackNuGetExePath)' == ''"></OverPackNuGetExePath>
+		<OverPackSolutionDir Condition="'$(OverPackSolutionDir)' == ''">$(SolutionDir)</OverPackSolutionDir>
+		<OverPackProjectPath Condition="'$(OverPackProjectPath)' == ''">$(ProjectPath)</OverPackProjectPath>
+		<OverPackOutputDirectory Condition="'$(OverPackOutputDirectory)' == ''">$(TargetDir)</OverPackOutputDirectory>
+		<OverPackBasePath Condition="'$(OverPackBasePath)' == ''">$(TargetDir)</OverPackBasePath>
+		<OverPackVersion Condition="'$(OverPackVersion)' == ''"></OverPackVersion>
+		<OverPackExclude Condition="'$(OverPackExclude)' == ''"></OverPackExclude>
+		<OverPackSymbols Condition="'$(OverPackSymbols)' == ''">false</OverPackSymbols>
+		<OverPackTool Condition="'$(OverPackTool)' == ''">false</OverPackTool>
+		<OverPackBuild Condition="'$(OverPackBuild)' == ''">true</OverPackBuild>
+		<OverPackNoDefaultExcludes Condition="'$(OverPackNoDefaultExcludes)' == ''">false</OverPackNoDefaultExcludes>
+		<OverPackNoPackageAnalysis Condition="'$(OverPackNoPackageAnalysis)' == ''">false</OverPackNoPackageAnalysis>
+		<OverPackIncludeReferencedProjects Condition="'$(OverPackIncludeReferencedProjects)' == ''">false</OverPackIncludeReferencedProjects>
+		<OverPackExcludeEmptyDirectories Condition="'$(OverPackExcludeEmptyDirectories)' == ''">false</OverPackExcludeEmptyDirectories>
+		<OverPackProperties Condition="'$(OverPackProperties)' == ''"></OverPackProperties>
+		<OverPackVerbosity Condition="'$(OverPackVerbosity)' == ''">normal</OverPackVerbosity>
+		<OverPackMinClientVersion Condition="'$(OverPackMinClientVersion)' == ''"></OverPackMinClientVersion>
+		<OverPackConfigurationName Condition="'$(OverPackConfigurationName)' == ''">$(ConfigurationName)</OverPackConfigurationName>
+		<OverPackPlatformName Condition="'$(OverPackPlatformName)' == ''">$(PlatformName)</OverPackPlatformName>
+		<OverPackExtraArguments Condition="'$(OverPackExtraArguments)' == ''"></OverPackExtraArguments>
+
+		<OverPackPublishPackageToFileShare Condition="'$(OverPackPublishPackageToFileShare)' == ''"></OverPackPublishPackageToFileShare>
+		<OverPackPublishPackageToHttp Condition="'$(OverPackPublishPackageToHttp)' == ''"></OverPackPublishPackageToHttp>
+		<OverPackPublishApiKey Condition="'$(OverPackPublishApiKey)' == ''"></OverPackPublishApiKey>
+		<OverPackPublishArguments Condition="'$(OverPackPublishArguments)' == ''"></OverPackPublishArguments>
+
+		<!-- Not Needed -->
+		<OverPackIncludeTypeScriptSourceFiles Condition="'$(OverPackIncludeTypeScriptSourceFiles)'==''">false</OverPackIncludeTypeScriptSourceFiles>
+		<OverPackNuSpecFileName Condition="'$(OverPackNuSpecFileName)' == ''"></OverPackNuSpecFileName>
+		<OverPackAppendToPackageId Condition="'$(OverPackAppendToPackageId)' == ''"></OverPackAppendToPackageId>
+		<OverPackReleaseNotesFile Condition="'$(OverPackReleaseNotesFile)' == ''"></OverPackReleaseNotesFile>
+		<OverPackNugetProperties Condition="'$(OverPackNuGetProperties)' == ''"></OverPackNugetProperties>
+		<OverPackEnforceAddingFiles Condition="'$(OverPackEnforceAddingFiles)' == ''">false</OverPackEnforceAddingFiles>
+		<OverPackPublishPackagesToTeamCity Condition="'$(OverPackPublishPackagesToTeamCity)' == ''">true</OverPackPublishPackagesToTeamCity>
+		<OverPackAppendProjectToFeed Condition="'$(OverPackAppendProjectToFeed)' == ''">false</OverPackAppendProjectToFeed>
+		<OverPackProjectName Condition="'$(OverPackProjectName)' == ''">$(MSBuildProjectName)</OverPackProjectName>
+		<OverPackAppConfigFileOverride Condition="'$(OverPackAppConfigFileOverride)' == ''">$(TargetDir)$(TargetFileName).config</OverPackAppConfigFileOverride>
+		<OverPackIgnoreNonRootScripts Condition="'$(OverPackIgnoreNonRootScripts)' == ''">false</OverPackIgnoreNonRootScripts>
+
+	</PropertyGroup>
+
+	<ItemGroup>
+		<OverPackExclude></OverPackExclude>
+	</ItemGroup>
+
+	<Target Name="OverPack" Condition="$(RunOverPack)">
+		<GetAssemblyVersionInfo AssemblyFiles="$(TargetPath)">
+			<Output TaskParameter="AssemblyVersionInfo" ItemName="AssemblyVersions"/>
+		</GetAssemblyVersionInfo>
+		<PropertyGroup>
+			<OverPackPackageVersion Condition="'$(OverPackPackageVersion)' == ''">%(AssemblyVersions.Version)</OverPackPackageVersion>
+		</PropertyGroup>
+		<PropertyGroup>
+			<OverPackPackageVersion Condition="'$(OverPackPackageVersion)' == ''">
+				<!-- Use the value from nuspec, or 1.0.0 if not in NuSpec -->
+			</OverPackPackageVersion>
+		</PropertyGroup>
+		<PropertyGroup>
+			<OverPackNuGetProperties Condition="'$(OverPackNuGetProperties)' == ''"></OverPackNuGetProperties>
+		</PropertyGroup>
+		<!--
+		Append project name so that you can nest packages in a structure such as [orgName]/[PackageName]/PackageName.Version.nupkg
+	-->
+		<PropertyGroup>
+			<OverPackPublishPackageToHttp Condition="'$(OverPackPublishPackageToHttp)' != '' AND '$(OverPackAppendProjectToFeed)'">$(OverPackPublishPackageToHttp)/$(MSBuildProjectName)</OverPackPublishPackageToHttp>
+		</PropertyGroup>
+
+		<ItemGroup>
+			<OverPackWrittenFiles Include="@(FileWrites)" Exclude="$(IntermediateOutputPath)**\*" />
+			<OverPackWrittenFiles Include="@(FileWritesShareable)" Exclude="$(IntermediateOutputPath)**\*" />
+
+			<OverPackContentFiles Include="@(Content)" />
+			<OverPackContentFiles Include="@(TypeScriptCompile)" />
+		</ItemGroup>
+
+		<CreateNuGetPackage
+			NuGetExePath="$(OverPackNuGetExePath)"
+			SolutionDir="$(OverPackSolutionDir)"
+			ProjectPath="$(OverPackProjectPath)"
+			OutputDirectory="$(OverPackOutputDirectory)"
+			BasePath="$(OverPackBasePath)"
+			Version="$(OverPackVersion)"
+			Exclude="@(OverPackExclude)"
+			Symbols="$(OverPackSymbols)"
+			Tool="$(OverPackTool)"
+			Build="$(OverPackBuild)"
+			NoDefaultExcludes="$(OverPackNoDefaultExcludes)"
+			NoPackageAnalysis="$(OverPackNoPackageAnalysis)"
+			IncludeReferencedProjects="$(OverPackIncludeReferencedProjects)"
+			ExcludeEmptyDirectories="$(OverPackExcludeEmptyDirectories)"
+			
+      NuSpecFileName="$(OverPackNuSpecFileName)"
+      AppendToPackageId="$(OverPackAppendToPackageId)"
+      ContentFiles="@(OverPackContentFiles)"
+      OutDir="$(OutDir)"
+      ProjectDirectory="$(MSBuildProjectDirectory)"
+      ProjectName="$(OverPackProjectName)"
+      PackageVersion="$(OverPackPackageVersion)"
+      PrimaryOutputAssembly="$(TargetPath)"
+      ReleaseNotesFile="$(OverPackReleaseNotesFile)"
+      
+      NuGetArguments="$(OverPackNuGetArguments)"
+      NuGetProperties="$(OverPackNuGetProperties)"
+      EnforceAddingFiles="$(OverPackEnforceAddingFiles)"
+      PublishPackagesToTeamCity="$(OverPackPublishPackagesToTeamCity)"
+      WrittenFiles="@(OverPackWrittenFiles)"
+      IncludeTypeScriptSourceFiles="$(OverPackIncludeTypeScriptSourceFiles)"
+      IgnoreNonRootScripts="$(OverPackIgnoreNonRootScripts)"
+      AppConfigFile="$(OverPackAppConfigFileOverride)"
+      >
+			<Output TaskParameter="Packages" ItemName="OverPackBuiltPackages" />
+			<Output TaskParameter="NuGetExePath" PropertyName="OverPackNuGetExePath" />
+		</CreateNuGetPackage>
+
+		<Message Text="Built package: @(OverPackBuiltPackages)" Importance="Low" />
+		<Message Text="NuGet.exe: $(OverPackNuGetExePath)" Importance="Low" />
+
+		<Message Text="Publish to file share: $(OverPackPublishPackageToFileShare)" Condition="'$(OverPackPublishPackageToFileShare)' != ''" Importance="Normal" />
+		<Copy SourceFiles="@(OverPackBuiltPackages)" DestinationFolder="$(OverPackPublishPackageToFileShare)" Condition="'$(OverPackPublishPackageToFileShare)' != ''" />
+
+		<Message Text="Publish to repository: $(OverPackPublishPackageToHttp)" Condition="'$(OverPackPublishPackageToHttp)' != ''" Importance="Normal" />
+		<Exec Command='"$(OverPackNuGetExePath)" push "@(OverPackBuiltPackages)" $(OverPackPublishApiKey) -s $(OverPackPublishPackageToHttp) $(OverPackNuGetPushProperties)' Condition="'$(OverPackPublishPackageToHttp)' != ''" />
+	</Target>
+
+</Project>
