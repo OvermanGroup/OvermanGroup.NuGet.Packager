@@ -1,0 +1,104 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+	<UsingTask TaskName="OvermanGroup.NuGet.Packager.Tasks.ResolveNuGetExePath" AssemblyFile="$(MSBuildThisFileDirectory).\OvermanGroup.NuGet.Packager.dll" />
+	<UsingTask TaskName="OvermanGroup.NuGet.Packager.Tasks.CreateNuGetPackage" AssemblyFile="$(MSBuildThisFileDirectory).\OvermanGroup.NuGet.Packager.dll" />
+	<UsingTask TaskName="OvermanGroup.NuGet.Packager.Tasks.PublishNuGetPackage" AssemblyFile="$(MSBuildThisFileDirectory).\OvermanGroup.NuGet.Packager.dll" />
+
+	<!--
+	http://blog.stangroome.com/2012/05/10/override-the-tfs-team-build-outdir-property-net-4-5/
+	-->
+
+	<PropertyGroup>
+		<BuildDependsOn>
+			$(BuildDependsOn);
+			OverPack
+		</BuildDependsOn>
+	</PropertyGroup>
+
+	<PropertyGroup>
+		<RunOverPack Condition="'$(RunOverPack)'==''">false</RunOverPack>
+
+		<OverPackNuGetExePath Condition="'$(OverPackNuGetExePath)' == ''"></OverPackNuGetExePath>
+		<OverPackInputFile Condition="'$(OverPackInputFile)' == ''">$(ProjectPath)</OverPackInputFile>
+		<OverPackSolutionDir Condition="'$(OverPackSolutionDir)' == ''">$(SolutionDir)</OverPackSolutionDir>
+		<OverPackProjectPath Condition="'$(OverPackProjectPath)' == ''">$(ProjectPath)</OverPackProjectPath>
+		<OverPackOutputDirectory Condition="'$(OverPackOutputDirectory)' == ''">$(TargetDir)</OverPackOutputDirectory>
+		<OverPackBasePath Condition="'$(OverPackBasePath)' == ''">$(TargetDir)</OverPackBasePath>
+		<OverPackVersion Condition="'$(OverPackVersion)' == ''"></OverPackVersion>
+		<OverPackExclude Condition="'$(OverPackExclude)' == ''"></OverPackExclude>
+		<OverPackSymbols Condition="'$(OverPackSymbols)' == ''">false</OverPackSymbols>
+		<OverPackTool Condition="'$(OverPackTool)' == ''">false</OverPackTool>
+		<OverPackNoDefaultExcludes Condition="'$(OverPackNoDefaultExcludes)' == ''">false</OverPackNoDefaultExcludes>
+		<OverPackNoPackageAnalysis Condition="'$(OverPackNoPackageAnalysis)' == ''">false</OverPackNoPackageAnalysis>
+		<OverPackIncludeReferencedProjects Condition="'$(OverPackIncludeReferencedProjects)' == ''">false</OverPackIncludeReferencedProjects>
+		<OverPackExcludeEmptyDirectories Condition="'$(OverPackExcludeEmptyDirectories)' == ''">false</OverPackExcludeEmptyDirectories>
+		<OverPackVerbosity Condition="'$(OverPackVerbosity)' == ''">normal</OverPackVerbosity>
+		<OverPackMinClientVersion Condition="'$(OverPackMinClientVersion)' == ''"></OverPackMinClientVersion>
+		<OverPackExtraArguments Condition="'$(OverPackExtraArguments)' == ''"></OverPackExtraArguments>
+
+		<!-- NuGet push to folder/http -->
+		<OverPackPublishToFolder Condition="'$(OverPackPublishToFolder)' == '' and '$(TF_BUILD_BINARIESDIRECTORY)' != '' and Exists('$(TF_BUILD_BINARIESDIRECTORY)')">$(TF_BUILD_BINARIESDIRECTORY)</OverPackPublishToFolder>
+		<OverPackPublishToHttp Condition="'$(OverPackPublishToHttp)' == ''"></OverPackPublishToHttp>
+		<OverPackPublishApiKey Condition="'$(OverPackPublishApiKey)' == ''"></OverPackPublishApiKey>
+		<OverPackPublishConfigFile Condition="'$(OverPackPublishConfigFile)' == ''"></OverPackPublishConfigFile>
+		<OverPackPublishArguments Condition="'$(OverPackPublishArguments)' == ''"></OverPackPublishArguments>
+
+	</PropertyGroup>
+
+	<Target Name="OverPack" Condition="$(RunOverPack)">
+
+		<PropertyGroup>
+			<ErrorText>Cannot find the specified NuSpec file. The missing file is '{0}'.</ErrorText>
+		</PropertyGroup>
+		<Error Condition="!Exists('$(OverPackInputFile)')" Text="$([System.String]::Format('$(ErrorText)', '$(OverPackInputFile)'))" />
+
+		<!-- NuGet pack -->
+		<CreateNuGetPackage
+			NuGetExePath="$(OverPackNuGetExePath)"
+			SolutionDir="$(OverPackSolutionDir)"
+			InputFile="$(OverPackInputFile)"
+			OutputDirectory="$(OverPackOutputDirectory)"
+			BasePath="$(OverPackBasePath)"
+			Version="$(OverPackVersion)"
+			Exclude="$(OverPackExclude)"
+			Symbols="$(OverPackSymbols)"
+			Tool="$(OverPackTool)"
+			NoDefaultExcludes="$(OverPackNoDefaultExcludes)"
+			NoPackageAnalysis="$(OverPackNoPackageAnalysis)"
+			IncludeReferencedProjects="$(OverPackIncludeReferencedProjects)"
+			ExcludeEmptyDirectories="$(OverPackExcludeEmptyDirectories)"
+			Verbosity="$(OverPackVerbosity)"
+			MinClientVersion="$(OverPackMinClientVersion)"
+			ExtraArguments="$(OverPackExtraArguments)">
+			<Output TaskParameter="PackageOutput" ItemName="OverPackOutputFile" />
+		</CreateNuGetPackage>
+
+		<!-- NuGet push to folder -->
+		<PublishNuGetPackage
+			Condition="'$(OverPackPublishToFolder)' != ''"
+			NuGetExePath="$(OverPackNuGetExePath)"
+			SolutionDir="$(OverPackSolutionDir)"
+			PackagePath="@(OverPackOutputFile)"
+			Source="$(OverPackPublishToFolder)"
+			ApiKey="$(OverPackPublishApiKey)"
+			Verbosity="$(OverPackVerbosity)"
+			ConfigFile="$(OverPackPublishConfigFile)"
+			PushArguments="$(OverPackPublishArguments)"
+		/>
+
+		<!-- NuGet push to http -->
+		<PublishNuGetPackage
+			Condition="'$(OverPackPublishToHttp)' != ''"
+			NuGetExePath="$(OverPackNuGetExePath)"
+			SolutionDir="$(OverPackSolutionDir)"
+			PackagePath="@(OverPackOutputFile)"
+			Source="$(OverPackPublishToHttp)"
+			ApiKey="$(OverPackPublishApiKey)"
+			Verbosity="$(OverPackVerbosity)"
+			ConfigFile="$(OverPackPublishConfigFile)"
+			PushArguments="$(OverPackPublishArguments)"
+		/>
+	</Target>
+
+</Project>
