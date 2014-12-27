@@ -33,29 +33,4 @@ namespace OvermanGroup.NuGet.Packager
 		}
 
 	}
-
-	public class CommandLineBuilderWrapper : CommandLineBuilder
-	{
-		public bool IsQuotingRequiredWrapper(string parameter)
-		{
-			return base.IsQuotingRequired(parameter);
-		}
-	}
-
-	public static class CommandLineBuilderHelper
-	{
-		private static readonly CommandLineBuilderWrapper mSingleton = new CommandLineBuilderWrapper();
-
-		public static bool IsQuotingRequired(string parameter)
-		{
-			return mSingleton.IsQuotingRequiredWrapper(parameter);
-		}
-
-		public static string FormatQuotedArgument(string name, string value)
-		{
-			var requiresQuotes = mSingleton.IsQuotingRequiredWrapper(value);
-			var quotes = requiresQuotes ? "\"" : String.Empty;
-			return String.Format("{0}={2}{1}{2}", name, value, quotes);
-		}
-	}
 }

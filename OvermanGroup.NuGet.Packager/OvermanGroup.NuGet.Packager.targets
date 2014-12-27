@@ -5,10 +5,6 @@
 	<UsingTask TaskName="OvermanGroup.NuGet.Packager.Tasks.CreateNuGetPackage" AssemblyFile="$(MSBuildThisFileDirectory).\OvermanGroup.NuGet.Packager.dll" />
 	<UsingTask TaskName="OvermanGroup.NuGet.Packager.Tasks.PublishNuGetPackage" AssemblyFile="$(MSBuildThisFileDirectory).\OvermanGroup.NuGet.Packager.dll" />
 
-	<!--
-	http://blog.stangroome.com/2012/05/10/override-the-tfs-team-build-outdir-property-net-4-5/
-	-->
-
 	<PropertyGroup>
 		<BuildDependsOn>
 			$(BuildDependsOn);
@@ -16,6 +12,11 @@
 		</BuildDependsOn>
 	</PropertyGroup>
 
+	<!--
+		Changes to these MSBuild properties should be made either in the local
+		'OvermanGroup.NuGet.Packager.props' file that was added to your project
+		or in a TFS build definition.
+	-->
 	<PropertyGroup>
 		<RunOverPack Condition="'$(RunOverPack)'==''">false</RunOverPack>
 
@@ -37,7 +38,6 @@
 		<OverPackMinClientVersion Condition="'$(OverPackMinClientVersion)' == ''"></OverPackMinClientVersion>
 		<OverPackExtraArguments Condition="'$(OverPackExtraArguments)' == ''"></OverPackExtraArguments>
 
-		<!-- NuGet push to folder/http -->
 		<OverPackPublishToFolder Condition="'$(OverPackPublishToFolder)' == '' and '$(TF_BUILD_BINARIESDIRECTORY)' != '' and Exists('$(TF_BUILD_BINARIESDIRECTORY)')">$(TF_BUILD_BINARIESDIRECTORY)</OverPackPublishToFolder>
 		<OverPackPublishToHttp Condition="'$(OverPackPublishToHttp)' == ''"></OverPackPublishToHttp>
 		<OverPackPublishApiKey Condition="'$(OverPackPublishApiKey)' == ''"></OverPackPublishApiKey>
@@ -53,7 +53,6 @@
 		</PropertyGroup>
 		<Error Condition="!Exists('$(OverPackInputFile)')" Text="$([System.String]::Format('$(ErrorText)', '$(OverPackInputFile)'))" />
 
-		<!-- NuGet pack -->
 		<CreateNuGetPackage
 			NuGetExePath="$(OverPackNuGetExePath)"
 			SolutionDir="$(OverPackSolutionDir)"
@@ -74,7 +73,6 @@
 			<Output TaskParameter="PackageOutput" ItemName="OverPackOutputFile" />
 		</CreateNuGetPackage>
 
-		<!-- NuGet push to folder -->
 		<PublishNuGetPackage
 			Condition="'$(OverPackPublishToFolder)' != ''"
 			NuGetExePath="$(OverPackNuGetExePath)"
@@ -87,7 +85,6 @@
 			PushArguments="$(OverPackPublishArguments)"
 		/>
 
-		<!-- NuGet push to http -->
 		<PublishNuGetPackage
 			Condition="'$(OverPackPublishToHttp)' != ''"
 			NuGetExePath="$(OverPackNuGetExePath)"

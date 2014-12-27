@@ -8,7 +8,10 @@ namespace OvermanGroup.NuGet.Packager.Tasks
 	public abstract class NuGetTask : ToolTask
 	{
 		private string mNuGetExePathSpecified;
-		private string mNuGetExePathResolved;
+
+		// This field is static because different task instances will need to use
+		// the same path to NuGet, so optimize the resolution logic.
+		private static string mNuGetExePathResolved;
 
 		[Required]
 		public virtual string SolutionDir { get; set; }
