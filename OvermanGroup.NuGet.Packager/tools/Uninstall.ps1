@@ -13,7 +13,7 @@ $itemsToRemove = @()
 
 # Allow many in case a past package was incorrectly uninstalled
 $itemsToRemove += $msbuild.Xml.Imports | Where-Object { $_.Project.EndsWith($propsName) }
-  
+
 # Remove the elements and save the project
 if ($itemsToRemove -and $itemsToRemove.length)
 {
@@ -21,6 +21,6 @@ if ($itemsToRemove -and $itemsToRemove.length)
 	{
 		$msbuild.Xml.RemoveChild($itemToRemove) | out-null
 	}
-	 
+
 	$project.Save()
 }

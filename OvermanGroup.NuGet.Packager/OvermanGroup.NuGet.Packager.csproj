@@ -75,6 +75,7 @@
     </None>
     <None Include="OvermanGroup.NuGet.Packager.props">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <SubType>Designer</SubType>
     </None>
     <None Include="OvermanGroup.NuGet.Packager.targets">
       <SubType>Designer</SubType>
@@ -89,6 +90,10 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="..\COPYRIGHT.txt">
+      <Link>COPYRIGHT.txt</Link>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="..\LICENSE.txt">
       <Link>LICENSE.txt</Link>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>

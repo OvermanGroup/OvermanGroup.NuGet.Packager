@@ -9,8 +9,9 @@
 		<authors>Overman Group, LLC.</authors>
 		<copyright>Copyright © 2014 Overman Group, LLC. All rights reserved.</copyright>
 
+		<iconUrl>http://i59.tinypic.com/2hh0zg7.png</iconUrl>
 		<projectUrl>https://github.com/OvermanGroup/OvermanGroup.NuGet.Packager</projectUrl>
-		<licenseUrl>https://github.com/OvermanGroup/OvermanGroup.NuGet.Packager/LICENSE.txt</licenseUrl>
+		<licenseUrl>https://github.com/OvermanGroup/OvermanGroup.NuGet.Packager/blob/master/COPYRIGHT.txt</licenseUrl>
 		<requireLicenseAcceptance>true</requireLicenseAcceptance>
 
 		<summary>MSBuild tasks for creating NuGet packages.</summary>
@@ -27,6 +28,7 @@
 		<file src="OvermanGroup.NuGet.Packager.targets" target="build" />
 		<file src="*.dll" target="build" />
 		<file src="tools\*" target="tools" />
-		<file src="LICENSE.txt" target="license.txt" />
+		<file src="COPYRIGHT.txt" />
+		<file src="LICENSE.txt" />
 	</files>
 </package>

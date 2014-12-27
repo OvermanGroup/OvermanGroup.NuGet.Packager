@@ -15,11 +15,15 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{446214
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{6A3B0E12-2DC2-4A6D-9CC9-550900EFFE4D}"
 	ProjectSection(SolutionItems) = preProject
+		COPYRIGHT.txt = COPYRIGHT.txt
 		LICENSE.txt = LICENSE.txt
 		README.md = README.md
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClassLibrary1", "ClassLibrary1\ClassLibrary1.csproj", "{783AFBC5-53EB-4DA0-9E6D-5BACE9B577A9}"
+	ProjectSection(ProjectDependencies) = postProject
+		{5204ABC7-0AD5-43C0-922A-AADC85201D2B} = {5204ABC7-0AD5-43C0-922A-AADC85201D2B}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

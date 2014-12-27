@@ -41,10 +41,6 @@ namespace OvermanGroup.NuGet.Packager.Tasks
 
 		public virtual string MinClientVersion { get; set; }
 
-		public virtual string ConfigurationName { get; set; }
-
-		public virtual string PlatformName { get; set; }
-
 		public virtual string ExtraArguments { get; set; }
 
 		[Output]
@@ -58,7 +54,7 @@ namespace OvermanGroup.NuGet.Packager.Tasks
 
 		protected override void LogArguments(MessageImportance importance)
 		{
-			var excludes = String.Join("; ", (Exclude ?? Enumerable.Empty<ITaskItem>())
+			var excludes = String.Join(";", (Exclude ?? Enumerable.Empty<ITaskItem>())
 				.Select(_ => _.ItemSpec)
 				.ToArray());
 
@@ -75,8 +71,6 @@ namespace OvermanGroup.NuGet.Packager.Tasks
 			Log.LogMessage(importance, "ExcludeEmptyDirectories: {0}", ExcludeEmptyDirectories);
 			Log.LogMessage(importance, "Verbosity: {0}", Verbosity);
 			Log.LogMessage(importance, "MinClientVersion: {0}", MinClientVersion);
-			Log.LogMessage(importance, "ConfigurationName: {0}", ConfigurationName);
-			Log.LogMessage(importance, "PlatformName: {0}", PlatformName);
 			Log.LogMessage(importance, "ExtraArguments: {0}", ExtraArguments);
 		}
 
@@ -137,20 +131,22 @@ namespace OvermanGroup.NuGet.Packager.Tasks
 
 		public virtual ITaskItem GetPackageOutput()
 		{
-			var files = Directory.GetFiles(OutputDirectory, "*.nupkg");
+			var dir = String.IsNullOrEmpty(OutputDirectory) ? Environment.CurrentDirectory : OutputDirectory;
+			var files = Directory.GetFiles(dir, "*.nupkg");
 			switch (files.Length)
 			{
 				case 0:
+					Log.LogWarning("Unable to determine package output.");
 					return null;
 
 				case 1:
-					Log.LogMessage(Constants.MessageImportance, "Detected creation of package '{0}' from single '*.nupkg' search result.", files[0]);
+					Log.LogMessage(Constants.MessageImportance, "Detected creation of package '{0}' from searching '*.nupkg' with a single result.", files[0]);
 					return new TaskItem(files[0]);
 			}
 
 			var prefix = Path.GetFileNameWithoutExtension(InputFile) ?? InputFile;
 			var file = files.Where(_ => _.StartsWith(prefix)).OrderByDescending(File.GetCreationTimeUtc).First();
-			Log.LogMessage(Constants.MessageImportance, "Detected creation of package '{0}' from latest '*.nupkg' search result.", file);
+			Log.LogMessage(Constants.MessageImportance, "Detected creation of package '{0}' from searching '*.nupkg' with the latest result.", file);
 
 			var item = new TaskItem(file);
 			return item;

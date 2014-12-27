@@ -17,14 +17,10 @@
 	</PropertyGroup>
 
 	<PropertyGroup>
-		<OverPackImported>true</OverPackImported>
-
-		<OverPackInputFile Condition="'$(OverPackInputFile)' == '' and Exists('$(ProjectDir)$(TargetName).nuspec')">$(ProjectDir)$(TargetName).nuspec</OverPackInputFile>
-		<OverPackInputFile Condition="'$(OverPackInputFile)' == ''">$(ProjectPath)</OverPackInputFile>
-
-		<RunOverPack Condition="'$(RunOverPack)'=='' or '$(OverPackInputFile)' == '' or !Exists('$(OverPackInputFile)')">false</RunOverPack>
+		<RunOverPack Condition="'$(RunOverPack)'==''">false</RunOverPack>
 
 		<OverPackNuGetExePath Condition="'$(OverPackNuGetExePath)' == ''"></OverPackNuGetExePath>
+		<OverPackInputFile Condition="'$(OverPackInputFile)' == ''">$(ProjectPath)</OverPackInputFile>
 		<OverPackSolutionDir Condition="'$(OverPackSolutionDir)' == ''">$(SolutionDir)</OverPackSolutionDir>
 		<OverPackProjectPath Condition="'$(OverPackProjectPath)' == ''">$(ProjectPath)</OverPackProjectPath>
 		<OverPackOutputDirectory Condition="'$(OverPackOutputDirectory)' == ''">$(TargetDir)</OverPackOutputDirectory>
@@ -39,12 +35,10 @@
 		<OverPackExcludeEmptyDirectories Condition="'$(OverPackExcludeEmptyDirectories)' == ''">false</OverPackExcludeEmptyDirectories>
 		<OverPackVerbosity Condition="'$(OverPackVerbosity)' == ''">normal</OverPackVerbosity>
 		<OverPackMinClientVersion Condition="'$(OverPackMinClientVersion)' == ''"></OverPackMinClientVersion>
-		<OverPackConfigurationName Condition="'$(OverPackConfigurationName)' == ''">$(ConfigurationName)</OverPackConfigurationName>
-		<OverPackPlatformName Condition="'$(OverPackPlatformName)' == ''">$(PlatformName)</OverPackPlatformName>
 		<OverPackExtraArguments Condition="'$(OverPackExtraArguments)' == ''"></OverPackExtraArguments>
 
 		<!-- NuGet push to folder/http -->
-		<OverPackPublishToFolder Condition="'$(OverPackPublishToFolder)' == ''"></OverPackPublishToFolder>
+		<OverPackPublishToFolder Condition="'$(OverPackPublishToFolder)' == '' and '$(TF_BUILD_BINARIESDIRECTORY)' != '' and Exists('$(TF_BUILD_BINARIESDIRECTORY)')">$(TF_BUILD_BINARIESDIRECTORY)</OverPackPublishToFolder>
 		<OverPackPublishToHttp Condition="'$(OverPackPublishToHttp)' == ''"></OverPackPublishToHttp>
 		<OverPackPublishApiKey Condition="'$(OverPackPublishApiKey)' == ''"></OverPackPublishApiKey>
 		<OverPackPublishConfigFile Condition="'$(OverPackPublishConfigFile)' == ''"></OverPackPublishConfigFile>
@@ -53,6 +47,13 @@
 	</PropertyGroup>
 
 	<Target Name="OverPack" Condition="$(RunOverPack)">
+
+		<PropertyGroup>
+			<ErrorText>Cannot find the specified NuSpec file. The missing file is '{0}'.</ErrorText>
+		</PropertyGroup>
+		<Error Condition="!Exists('$(OverPackInputFile)')" Text="$([System.String]::Format('$(ErrorText)', '$(OverPackInputFile)'))" />
+
+		<!-- NuGet pack -->
 		<CreateNuGetPackage
 			NuGetExePath="$(OverPackNuGetExePath)"
 			SolutionDir="$(OverPackSolutionDir)"
@@ -69,10 +70,8 @@
 			ExcludeEmptyDirectories="$(OverPackExcludeEmptyDirectories)"
 			Verbosity="$(OverPackVerbosity)"
 			MinClientVersion="$(OverPackMinClientVersion)"
-			ConfigurationName="$(OverPackConfigurationName)"
-			PlatformName="$(OverPackPlatformName)"
 			ExtraArguments="$(OverPackExtraArguments)">
-			<Output TaskParameter="PackageOutput" ItemName="OctoPackOutputFile" />
+			<Output TaskParameter="PackageOutput" ItemName="OverPackOutputFile" />
 		</CreateNuGetPackage>
 
 		<!-- NuGet push to folder -->
@@ -80,7 +79,7 @@
 			Condition="'$(OverPackPublishToFolder)' != ''"
 			NuGetExePath="$(OverPackNuGetExePath)"
 			SolutionDir="$(OverPackSolutionDir)"
-			PackagePath="@(OctoPackOutputFile)"
+			PackagePath="@(OverPackOutputFile)"
 			Source="$(OverPackPublishToFolder)"
 			ApiKey="$(OverPackPublishApiKey)"
 			Verbosity="$(OverPackVerbosity)"
@@ -93,7 +92,7 @@
 			Condition="'$(OverPackPublishToHttp)' != ''"
 			NuGetExePath="$(OverPackNuGetExePath)"
 			SolutionDir="$(OverPackSolutionDir)"
-			PackagePath="@(OctoPackOutputFile)"
+			PackagePath="@(OverPackOutputFile)"
 			Source="$(OverPackPublishToHttp)"
 			ApiKey="$(OverPackPublishApiKey)"
 			Verbosity="$(OverPackVerbosity)"
