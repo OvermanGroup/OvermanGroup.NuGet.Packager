@@ -1,0 +1,34 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+	<metadata minClientVersion="2.8">
+		<id>OvermanGroup.NuGet.Packager</id>
+		<title>OvermanGroup.NuGet.Packager</title>
+		<version>1.0.0</version>
+
+		<owners>Overman Group, LLC.</owners>
+		<authors>Overman Group, LLC.</authors>
+		<copyright>Copyright © 2014 Overman Group, LLC. All rights reserved.</copyright>
+
+		<iconUrl>http://i59.tinypic.com/2hh0zg7.png</iconUrl>
+		<projectUrl>https://github.com/OvermanGroup/OvermanGroup.NuGet.Packager</projectUrl>
+		<licenseUrl>https://github.com/OvermanGroup/OvermanGroup.NuGet.Packager/blob/master/COPYRIGHT.txt</licenseUrl>
+		<requireLicenseAcceptance>true</requireLicenseAcceptance>
+
+		<summary>MSBuild tasks for creating NuGet packages.</summary>
+		<description>MSBuild tasks for creating NuGet packages.</description>
+		<tags>nuget pack package tfs build msbuild automation</tags>
+
+		<dependencies>
+			<dependency id="NuGet.CommandLine" version="[2.8.3,)"/>
+		</dependencies>
+		<developmentDependency>true</developmentDependency>
+	</metadata>
+	<files>
+		<file src="OvermanGroup.NuGet.Packager.props" target="content" />
+		<file src="OvermanGroup.NuGet.Packager.targets" target="build" />
+		<file src="*.dll" target="build" />
+		<file src="tools\*" target="tools" />
+		<file src="COPYRIGHT.txt" />
+		<file src="LICENSE.txt" />
+	</files>
+</package>
