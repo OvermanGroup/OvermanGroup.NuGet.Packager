@@ -3,7 +3,6 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using CuttingEdge.Conditions;
-using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
 using NuGet.Packaging;
 
@@ -12,7 +11,6 @@ namespace OvermanGroup.NuGet.Packager
 	public class NuGetExeResolver
 	{
 		public virtual TaskLoggingHelper Logger { get; private set; }
-
 		public virtual string SolutionDir { get; private set; }
 
 		public NuGetExeResolver(TaskLoggingHelper logger, string solutionDir)
@@ -26,19 +24,19 @@ namespace OvermanGroup.NuGet.Packager
 
 		public virtual string GetNuGetExePath()
 		{
-			Logger.LogMessage(MessageImportance.Low, "Attempting to locate NuGet.exe with solution directory '{0}'.", SolutionDir);
+			Logger.LogMessage(Constants.MessageImportance, "Attempting to locate NuGet.exe for '{0}'.", SolutionDir);
 
 			string nuGetExePath;
 
-			if (TryFromSystem(out nuGetExePath))
+			if (TryFromPackages(out nuGetExePath))
 			{
-				Logger.LogMessage(MessageImportance.Low, "Found NuGet.exe from system at location '{0}'.", nuGetExePath);
+				Logger.LogMessage(Constants.MessageImportance, "Found NuGet.exe from packages at location '{0}'.", nuGetExePath);
 				return nuGetExePath;
 			}
 
-			if (TryFromPackages(out nuGetExePath))
+			if (TryFromSystem(out nuGetExePath))
 			{
-				Logger.LogMessage(MessageImportance.Low, "Found NuGet.exe from packages at location '{0}'.", nuGetExePath);
+				Logger.LogMessage(Constants.MessageImportance, "Found NuGet.exe from system at location '{0}'.", nuGetExePath);
 				return nuGetExePath;
 			}
 
@@ -62,14 +60,14 @@ namespace OvermanGroup.NuGet.Packager
 
 		public virtual bool TryFromPackages(out string nuGetExePath)
 		{
-			var pathToPackagesConfig = Path.Combine(SolutionDir, Constants.PackagesFileName);
-			if (!File.Exists(pathToPackagesConfig))
+			var packagesConfigPath = Path.Combine(SolutionDir, ".nuget", Constants.PackagesFileName);
+			if (!File.Exists(packagesConfigPath))
 			{
 				nuGetExePath = null;
 				return false;
 			}
 
-			var stream = File.OpenRead(pathToPackagesConfig);
+			var stream = File.OpenRead(packagesConfigPath);
 			var reader = new PackagesConfigReader(stream, false);
 
 			nuGetExePath = reader.GetPackages()
@@ -79,15 +77,16 @@ namespace OvermanGroup.NuGet.Packager
 				.Where(File.Exists)
 				.FirstOrDefault();
 
-			return String.IsNullOrEmpty(nuGetExePath);
+			return !String.IsNullOrEmpty(nuGetExePath);
 		}
 
 		public virtual string FormatNuGetExePath(PackageReference packageReference)
 		{
 			var packageIdentity = packageReference.PackageIdentity;
 			var path = Path.Combine(SolutionDir, "packages",
-				String.Format(packageIdentity.Id, packageIdentity.Version, "{0}.{1}"),
+				String.Format("{0}.{1}", packageIdentity.Id, packageIdentity.Version),
 				"tools", Constants.NuGetFileName);
+
 			return path;
 		}
 

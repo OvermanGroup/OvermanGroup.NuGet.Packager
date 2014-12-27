@@ -70,13 +70,36 @@
     <Compile Include="Tasks\ResolveNuGetExePath.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="OvermanGroup.NuGet.Packager.nuspec" />
-    <None Include="OvermanGroup.NuGet.Packager.targets">
+    <None Include="OvermanGroup.NuGet.Packager.nuspec">
       <SubType>Designer</SubType>
     </None>
+    <None Include="OvermanGroup.NuGet.Packager.props">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="OvermanGroup.NuGet.Packager.targets">
+      <SubType>Designer</SubType>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="packages.config" />
+    <None Include="tools\Install.ps1">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="tools\Uninstall.ps1">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="..\LICENSE.txt">
+      <Link>LICENSE.txt</Link>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>SET TargetFolder=$(TargetDir)
+IF %25TargetFolder:~-1%25==\ SET TargetFolder=%25TargetFolder:~0,-1%25
+nuget pack "$(ProjectDir)$(TargetName).nuspec" -Verbosity detailed -NonInteractive -NoPackageAnalysis -OutputDirectory "%25TargetFolder%25" -BasePath "%25TargetFolder%25"</PostBuildEvent>
+  </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
