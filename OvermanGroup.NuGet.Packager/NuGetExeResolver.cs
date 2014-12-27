@@ -63,6 +63,7 @@ namespace OvermanGroup.NuGet.Packager
 			var packagesConfigPath = Path.Combine(SolutionDir, ".nuget", Constants.PackagesFileName);
 			if (!File.Exists(packagesConfigPath))
 			{
+				Logger.LogWarning("Unable to find '{0}'.", packagesConfigPath);
 				nuGetExePath = null;
 				return false;
 			}
