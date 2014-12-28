@@ -6,30 +6,32 @@
 		your NuGet package is created and/or published. All of these properties
 		may even be specified in your TFS build definition such as "/p:RunOverPack=true".
 
-		<RunOverPack Condition="'$(RunOverPack)'==''">false</RunOverPack>
-			By default, these tasks are disabled and you must explicitly enable them
-			by overriding the above property to specify 'true'.
+		<RunOverPack Condition="'$(RunOverPack)'==''">true</RunOverPack>
+			By default, all the tasks are disabled and you must explicitly enable
+			them by specifing the property below. If this property is omitted, blank,
+			or false then your NuGet package will not be created or published.
 
 		<OverPackNuGetExePath Condition="'$(OverPackNuGetExePath)' == ''"></OverPackNuGetExePath>
-			Specifies the location for the NuGet.exe command. The default bahavior is
+			Specifies the location for the NuGet.exe command. The default behavior is
 			to check the following in order:
-			1) The latest version of 'NuGet.CommandLine' (under the 'tools' subfolder) in the packages folder.
-			2) Attempting to find 'NuGet.exe' in the system's PATH environment variable by using the SearchPath API.
-			Usually this always succeeds, but if any of the above fail, then the user
-			must specify the location of the NuGet.exe command with this property.
+			1) The latest version of 'NuGet.CommandLine' (under the 'tools' subfolder) in the solution packages folder.
+			2) Attempting to find 'NuGet.exe' in the system's PATH environment variable by using the SearchPath Win32 API.
+			Usually one of these methods will always succeed, but if any of the above
+			fail, then the user must specify the location of the NuGet.exe command
+			with this property.
 
 		NuGet Pack Command:
 		http://docs.nuget.org/docs/Reference/Command-Line-Reference#Pack_Command
 
 		<OverPackInputFile Condition="'$(OverPackInputFile)' == ''">$(ProjectPath)</OverPackInputFile>
-			A convienent way to create a package from a csproj or vbproj that
+			A convienent way to create a NuGet package from a csproj or vbproj that
 			supports replacement tokens in the NuSpec file. This is the default
 			behavior.
 			http://docs.nuget.org/docs/reference/nuspec-reference#Replacement_Tokens
 			http://docs.nuget.org/docs/Creating-Packages/Creating-and-Publishing-a-Package#From_a_project
 
 		<OverPackInputFile Condition="'$(OverPackInputFile)' == ''">$(ProjectDir)$(TargetName).nuspec</OverPackInputFile>
-			Creates a package from a NuSpec manifest file. Note that replacement
+			Creates a NuGet package from a NuSpec manifest file. Note that replacement
 			tokens are NOT supported.
 			http://docs.nuget.org/docs/reference/nuspec-reference
 
@@ -41,27 +43,27 @@
 			projects in a solution file.
 
 		<OverPackOutputDirectory Condition="'$(OverPackOutputDirectory)' == ''">$(TargetDir)</OverPackOutputDirectory>
-			Specifies the directory for the created NuGet package file. If not
-			specified, uses the build output directory.
+			Specifies the directory where to place the newly created NuGet package
+			file. The default specifies the build output directory.
 
 		<OverPackBasePath Condition="'$(OverPackBasePath)' == ''">$(TargetDir)</OverPackBasePath>
 			The base path of the files defined in the nuspec file. If not specified,
 			uses the build output directory. For any files to be properly included
-			in the package, make sure to set the 'Copy to Output Directory' property
-			to anything other than 'Do not copy'.
+			in the NuGet package, make sure to set the 'Copy to Output Directory'
+			property to anything other than 'Do not copy'.
 
 		<OverPackVersion Condition="'$(OverPackVersion)' == ''"></OverPackVersion>
-			Overrides the version number from the nuspec file. If not specified, uses
-			the version from the csproj or nuspec file.
+			Overrides the version number for the NuGet package. If not specified,
+			uses the version from the project or nuspec file.
 
 		<OverPackExclude Condition="'$(OverPackExclude)' == ''"></OverPackExclude>
-			Specifies one or more wildcard patterns to exclude when creating a package.
-			Separate multiple entries with a semicolon ';'.
+			Specifies one or more wildcard patterns to exclude when creating the
+			NuGet package. Separate multiple entries with a semicolon ';'.
 
 		<OverPackSymbols Condition="'$(OverPackSymbols)' == ''">false</OverPackSymbols>
-			Determines if a package containing sources and symbols should be created.
-			When specified with a nuspec, creates a regular NuGet package file and the
-			corresponding symbols package.
+			Determines if a NuGet package containing sources and symbols should be
+			created. When specified with a nuspec, creates a regular NuGet package
+			file and the corresponding symbols package.
 
 		<OverPackTool Condition="'$(OverPackTool)' == ''">false</OverPackTool>
 			Determines if the output files of the project should be in the tool folder.
@@ -71,36 +73,37 @@
 			starting with a dot e.g. .svn.
 
 		<OverPackNoPackageAnalysis Condition="'$(OverPackNoPackageAnalysis)' == ''">false</OverPackNoPackageAnalysis>
-			Specify if the command should not run package analysis after building the
-			package.
+			Specifies if the command should not run package analysis after building
+			the NuGet package.
 
 		<OverPackIncludeReferencedProjects Condition="'$(OverPackIncludeReferencedProjects)' == ''">false</OverPackIncludeReferencedProjects>
 			Include referenced projects either as dependencies or as part of the package.
 			If a referenced project has a corresponding nuspec file that has the same
 			name as the project, then that referenced project is added as a dependency.
-			Otherwise, the referenced project is added as part of the package.
+			Otherwise, the referenced project is added as part of the NuGet package.
 
 		<OverPackExcludeEmptyDirectories Condition="'$(OverPackExcludeEmptyDirectories)' == ''">false</OverPackExcludeEmptyDirectories>
-			Prevent inclusion of empty directories when building the package.
+			Prevents inclusion of empty directories when building the NuGet package.
 
 		<OverPackVerbosity Condition="'$(OverPackVerbosity)' == ''">normal</OverPackVerbosity>
-			Display this amount of details in the output: normal, quiet, detailed.
-			This property is used for both the 'pack' and 'push' NuGet commands.
+			Specifies the amount of details to show from the command output: normal,
+			quiet, detailed. This property is used for both the 'pack' and 'push'
+			NuGet commands.
 
 		<OverPackMinClientVersion Condition="'$(OverPackMinClientVersion)' == ''"></OverPackMinClientVersion>
-			Set the minClientVersion attribute for the created package. This value
-			will override the value of the existing minClientVersion attribute (if
-			any) in the .nuspec file.
+			Specifies the minClientVersion attribute for the created package. This
+			value will override the value of the existing minClientVersion attribute
+			(if any) in the .nuspec file.
 
 		<OverPackExtraArguments Condition="'$(OverPackExtraArguments)' == ''"></OverPackExtraArguments>
-			Any additional arguments to pass to NuGet when invoking the 'pack' command.
+			Specifies any additional arguments to pass to NuGet when invoking the 'pack' command.
 
 		NuGet Push Command:
 		http://docs.nuget.org/docs/Reference/Command-Line-Reference#Push_Command
 
 		<OverPackPublishToFolder Condition="'$(OverPackPublishToFolder)' == ''"></OverPackPublishToFolder>
 			Specifies the UNC/folder location where to publish the package to. If not
-			specified, the default uses $(TF_BUILD_BINARIESDIRECTORY).
+			specified, the default uses $(TF_BUILD_BINARIESDIRECTORY) for TFS builds.
 			http://msdn.microsoft.com/en-us/library/hh850448.aspx
 
 		<OverPackPublishToHttp Condition="'$(OverPackPublishToHttp)' == ''"></OverPackPublishToHttp>
@@ -109,14 +112,14 @@
 			NuGet config file.
 
 		<OverPackPublishApiKey Condition="'$(OverPackPublishApiKey)' == ''"></OverPackPublishApiKey>
-			The API key for the server.
+			Specifies the API key for the publishing server.
 
 		<OverPackPublishConfigFile Condition="'$(OverPackPublishConfigFile)' == ''"></OverPackPublishConfigFile>
-			The NuGet configuation file. If not specified, file %AppData%\NuGet\NuGet.config
-			is used as configuration file.
+			Specifies the NuGet configuation file. If not specified, %AppData%\NuGet\NuGet.config
+			is used as the configuration file.
 
 		<OverPackPublishArguments Condition="'$(OverPackPublishArguments)' == ''"></OverPackPublishArguments>
-			Any additional arguments to pass to NuGet when invoking the 'push' command.
+			Specifies any additional arguments to pass to NuGet when invoking the 'push' command.
 
 		-->
 	</PropertyGroup>
