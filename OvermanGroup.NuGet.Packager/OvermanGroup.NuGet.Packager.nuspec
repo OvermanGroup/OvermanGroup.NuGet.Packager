@@ -12,7 +12,7 @@
 		<iconUrl>http://i59.tinypic.com/2hh0zg7.png</iconUrl>
 		<projectUrl>https://github.com/OvermanGroup/OvermanGroup.NuGet.Packager</projectUrl>
 		<licenseUrl>https://github.com/OvermanGroup/OvermanGroup.NuGet.Packager/blob/master/COPYRIGHT.txt</licenseUrl>
-		<requireLicenseAcceptance>true</requireLicenseAcceptance>
+		<requireLicenseAcceptance>false</requireLicenseAcceptance>
 
 		<summary>MSBuild tasks for creating NuGet packages.</summary>
 		<description>MSBuild tasks for creating NuGet packages.</description>
