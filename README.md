@@ -74,7 +74,7 @@ Overrides the version number for the NuGet package. If not specified, uses the v
 ```
 
 ### OverPackExclude
-Specifies one or more wildcard patterns to exclude when creating the NuGet package. Separate multiple entries with a semicolon ';'.
+Specifies one or more wildcard patterns to exclude when creating the NuGet package. Separate multiple entries with a semicolon `;`
 ```
 <OverPackExclude Condition="'$(OverPackExclude)' == ''"></OverPackExclude>
 ```

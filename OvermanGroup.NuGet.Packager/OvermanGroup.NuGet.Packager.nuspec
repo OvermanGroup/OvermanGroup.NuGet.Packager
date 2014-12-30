@@ -3,7 +3,7 @@
 	<metadata minClientVersion="2.8">
 		<id>OvermanGroup.NuGet.Packager</id>
 		<title>OvermanGroup.NuGet.Packager</title>
-		<version>1.0.0</version>
+		<version>1.0.1</version>
 
 		<owners>Overman Group, LLC.</owners>
 		<authors>Overman Group, LLC.</authors>
@@ -14,8 +14,8 @@
 		<licenseUrl>https://github.com/OvermanGroup/OvermanGroup.NuGet.Packager/blob/master/COPYRIGHT.txt</licenseUrl>
 		<requireLicenseAcceptance>false</requireLicenseAcceptance>
 
-		<summary>MSBuild tasks for creating NuGet packages.</summary>
-		<description>MSBuild tasks for creating NuGet packages.</description>
+		<summary>MSBuild tasks for creating and publishing NuGet packages.</summary>
+		<description>MSBuild tasks for creating and publishing NuGet packages.</description>
 		<tags>nuget pack package tfs build msbuild automation</tags>
 
 		<dependencies>
