@@ -1,6 +1,9 @@
 # OvermanGroup.NuGet.Packager
 MSBuild tasks for creating and publishing NuGet packages.
 
+## PURPOSE
+I found myself re-creating the same batch and powershell Post Build scripts to generate NuGet packages for my C# projects very often. When I first searched NuGet for existing tools to automate package creation, I wasn't pleased with the results. There were a bunch of existing packages that added a lot of bloat to my projects and weren't easy to configure. In the end, I wanted something very familiar to OctoPack which is used by Octopus Deploy in our environment. So this package was born and my very first contribution to NuGet. Hope you enjoy and please let me know any comments or suggestions.
+
 ## FEATURES
 - Automatically finds NuGet.exe
 - Creates packages from project files (csproj, vbproj, etc)
@@ -161,6 +164,9 @@ Specifies any additional arguments to pass to NuGet when invoking the 'push' com
 
 ## TFS BUILD INTEGRATION
 > TODO
+
+## What's with the name?
+So "Overman Group" is an LLC that I created in college with the intent to someday start my own software company. Well 12 years later, I did nothing on that horizon and have been busy with my day-to-day engineering job. I prefixed this package with OvermanGroup solely for organizational purposes just in case there are naming conflicts with anyone else.
 
 [1]: https://www.nuget.org/packages/NuGet.CommandLine/
 [2]: http://msdn.microsoft.com/en-us/library/windows/desktop/aa365527%28v=vs.85%29.aspx
