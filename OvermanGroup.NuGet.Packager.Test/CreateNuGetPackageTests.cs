@@ -9,41 +9,53 @@ namespace OvermanGroup.NuGet.Packager.Test
 	[TestClass]
 	public class CreateNuGetPackageTests : TestHelper
 	{
-		private const string ExpectedVersion = "1.0.0-test";
-
 		[TestMethod]
-		public void FromProject()
+		public void FromProjectNoSymbols()
 		{
 			var name = Assembly.GetExecutingAssembly().GetName().Name;
 			var input = Path.Combine(SolutionDir, name, name + ".csproj");
-			var outputDirectory = TestContext.DeploymentDirectory;
+			var outputDirectory = PrepareOutputDirectory();
 
 			var task = new CreateNuGetPackage
 			{
-				// common
 				BuildEngine = BuildEngine,
 				SolutionDir = SolutionDir,
-				// required
 				InputFile = input,
-				// optional
 				Verbosity = "detailed",
-				OutputDirectory = outputDirectory
+				OutputDirectory = outputDirectory,
+				Symbols = false,
 			};
 
-			var success = task.Execute();
-			Assert.IsTrue(success, "Checking task return value");
-			Assert.AreEqual(0, task.ExitCode, "Checking task ErrorCode");
-
-			var outputPath = VerifyPackageOutput(task.PackageOutput);
-			VerifyPackageVersion(outputPath, ExpectedVersion);
+			VerifyOutput(task, false);
 		}
 
 		[TestMethod]
-		public void FromProjectVersionOverride()
+		public void FromProjectWithSymbols()
 		{
 			var name = Assembly.GetExecutingAssembly().GetName().Name;
 			var input = Path.Combine(SolutionDir, name, name + ".csproj");
-			var outputDirectory = TestContext.DeploymentDirectory;
+			var outputDirectory = PrepareOutputDirectory();
+
+			var task = new CreateNuGetPackage
+			{
+				BuildEngine = BuildEngine,
+				SolutionDir = SolutionDir,
+				InputFile = input,
+				Verbosity = "detailed",
+				OutputDirectory = outputDirectory,
+				Symbols = true,
+			};
+
+			VerifyOutput(task, false);
+			VerifyOutput(task, true);
+		}
+
+		[TestMethod]
+		public void FromProjectOverrideVersionNoSymbols()
+		{
+			var name = Assembly.GetExecutingAssembly().GetName().Name;
+			var input = Path.Combine(SolutionDir, name, name + ".csproj");
+			var outputDirectory = PrepareOutputDirectory();
 
 			var version = String.Format(
 				"{0}.{1}.{2}-test",
@@ -53,68 +65,99 @@ namespace OvermanGroup.NuGet.Packager.Test
 
 			var task = new CreateNuGetPackage
 			{
-				// common
 				BuildEngine = BuildEngine,
 				SolutionDir = SolutionDir,
-				// required
 				InputFile = input,
-				// optional
 				Verbosity = "detailed",
 				OutputDirectory = outputDirectory,
-				// test specific
 				Version = version,
+				Symbols = false,
 			};
 
-			var success = task.Execute();
-			Assert.IsTrue(success, "Checking task return value");
-			Assert.AreEqual(0, task.ExitCode, "Checking task ErrorCode");
-
-			var outputPath = VerifyPackageOutput(task.PackageOutput);
-			VerifyPackageVersion(outputPath, version);
+			VerifyOutput(task, false, version);
 		}
 
 		[TestMethod]
-		public void FromNuSpecPass()
+		public void FromProjectOverrideVersionWithSymbols()
+		{
+			var name = Assembly.GetExecutingAssembly().GetName().Name;
+			var input = Path.Combine(SolutionDir, name, name + ".csproj");
+			var outputDirectory = PrepareOutputDirectory();
+
+			var version = String.Format(
+				"{0}.{1}.{2}-test",
+				mRandom.Next(1024),
+				mRandom.Next(1024),
+				mRandom.Next(1024));
+
+			var task = new CreateNuGetPackage
+			{
+				BuildEngine = BuildEngine,
+				SolutionDir = SolutionDir,
+				InputFile = input,
+				Verbosity = "detailed",
+				OutputDirectory = outputDirectory,
+				Version = version,
+				Symbols = true,
+			};
+
+			VerifyOutput(task, false, version);
+			VerifyOutput(task, true, version);
+		}
+
+		[TestMethod]
+		public void FromNuSpecNoSymbols()
 		{
 			var name = Assembly.GetExecutingAssembly().GetName().Name;
 			var input = Path.Combine(SolutionDir, name, name + ".nuspec");
-			var outputDirectory = TestContext.DeploymentDirectory;
+			var outputDirectory = PrepareOutputDirectory();
 
 			var task = new CreateNuGetPackage
 			{
-				// common
 				BuildEngine = BuildEngine,
 				SolutionDir = SolutionDir,
-				// required
 				InputFile = input,
-				// optional
 				Verbosity = "detailed",
-				OutputDirectory = outputDirectory
+				OutputDirectory = outputDirectory,
+				Symbols = false,
 			};
 
-			var success = task.Execute();
-			Assert.IsTrue(success, "Checking task return value");
-			Assert.AreEqual(0, task.ExitCode, "Checking task ErrorCode");
-
-			var outputPath = VerifyPackageOutput(task.PackageOutput);
-			VerifyPackageVersion(outputPath, ExpectedVersion);
+			VerifyOutput(task, false);
 		}
 
 		[TestMethod]
-		public void FromNuSpecFail()
+		public void FromNuSpecWithSymbols()
 		{
 			var name = Assembly.GetExecutingAssembly().GetName().Name;
-			var input = Path.Combine(SolutionDir, name, name + ".cant-find-me.nuspec");
-			var outputDirectory = TestContext.DeploymentDirectory;
+			var input = Path.Combine(SolutionDir, name, name + ".nuspec");
+			var outputDirectory = PrepareOutputDirectory();
 
 			var task = new CreateNuGetPackage
 			{
-				// common
 				BuildEngine = BuildEngine,
 				SolutionDir = SolutionDir,
-				// required
+				Verbosity = "detailed",
 				InputFile = input,
-				// optional
+				OutputDirectory = outputDirectory,
+				Symbols = true,
+			};
+
+			VerifyOutput(task, false);
+			VerifyOutput(task, true);
+		}
+
+		[TestMethod]
+		public void FromNuSpecMissing()
+		{
+			var name = Assembly.GetExecutingAssembly().GetName().Name;
+			var input = Path.Combine(SolutionDir, name, name + ".cant-find-me.nuspec");
+			var outputDirectory = PrepareOutputDirectory();
+
+			var task = new CreateNuGetPackage
+			{
+				BuildEngine = BuildEngine,
+				SolutionDir = SolutionDir,
+				InputFile = input,
 				Verbosity = "detailed",
 				OutputDirectory = outputDirectory
 			};
@@ -123,6 +166,7 @@ namespace OvermanGroup.NuGet.Packager.Test
 			Assert.IsFalse(success, "Checking task return value");
 			Assert.AreNotEqual(0, task.ExitCode, "Checking task ErrorCode");
 			Assert.IsNull(task.PackageOutput, "Checking if PackageOutput is null");
+			Assert.IsNull(task.PackageSymbols, "Checking if PackageSymbols is null");
 		}
 
 	}

@@ -6,12 +6,15 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using NuGet.Packaging;
 using NuGet.PackagingCore;
+using OvermanGroup.NuGet.Packager.Tasks;
 
 namespace OvermanGroup.NuGet.Packager.Test
 {
 	[TestClass]
 	public abstract class TestHelper
 	{
+		protected const string ExpectedVersion = "1.0.0-test";
+
 		protected readonly Random mRandom = new Random();
 		protected Mock<IBuildEngine> mBuildEngineMock;
 		protected TaskLoggingHelper mLogger;
@@ -64,22 +67,43 @@ namespace OvermanGroup.NuGet.Packager.Test
 			return dir;
 		}
 
-		public virtual string VerifyPackageOutput(ITaskItem outputItem)
+		public virtual string PrepareOutputDirectory()
 		{
-			Assert.IsNotNull(outputItem, "Checking if PackageOutput is null");
-
-			var outputPath = outputItem.ItemSpec;
-			Assert.IsFalse(String.IsNullOrEmpty(outputPath), "Checking if the output path is null or empty");
-			Assert.IsTrue(File.Exists(outputPath), "Checking if the output path exists");
-
-			TestContext.AddResultFile(outputPath);
-
-			return outputPath;
+			// so that the test cases don't collide with each other, place the output packages in separate folders
+			var baseDir = TestContext.DeploymentDirectory;
+			var dir = Path.Combine(baseDir, TestContext.TestName);
+			Directory.CreateDirectory(dir);
+			return dir;
 		}
 
-		public virtual void VerifyPackageVersion(string outputPath, string expectedVersion)
+		public virtual ITaskItem VerifyOutput(CreateNuGetPackage task, bool symbols, string expectedVersion = ExpectedVersion)
 		{
-			using (var stream = File.OpenRead(outputPath))
+			var success = task.Execute();
+			Assert.IsTrue(success, "Checking task return value");
+			Assert.AreEqual(0, task.ExitCode, "Checking task ErrorCode");
+
+			var package = symbols ? task.PackageSymbols : task.PackageOutput;
+			VerifyPackageOutput(package);
+
+			return package;
+		}
+
+		public virtual string VerifyPackageOutput(ITaskItem item)
+		{
+			Assert.IsNotNull(item, "Checking if item is null");
+
+			var path = item.ItemSpec;
+			Assert.IsFalse(String.IsNullOrEmpty(path), "Checking if the path is null or empty");
+			Assert.IsTrue(File.Exists(path), "Checking if the path exists");
+
+			TestContext.AddResultFile(path);
+
+			return path;
+		}
+
+		public virtual void VerifyPackageVersion(string packagePath, string expectedVersion)
+		{
+			using (var stream = File.OpenRead(packagePath))
 			using (var fileSystem = new ZipFileSystem(stream))
 			using (var reader = new PackageReader(fileSystem))
 			{

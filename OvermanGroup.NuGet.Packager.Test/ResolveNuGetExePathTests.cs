@@ -20,10 +20,10 @@ namespace OvermanGroup.NuGet.Packager.Test
 			Assert.IsTrue(success, "Checking task return value");
 
 			var item = task.NuGetExePath;
-			Assert.IsNotNull(item, "Checking if NuGetExePath is null");
+			Assert.IsNotNull(item, "Checking if TaskItem is null");
 
 			var path = item.ItemSpec;
-			Assert.AreNotEqual(String.Empty, path ?? String.Empty, "Checking if ItemSpec is NullOrEmpty");
+			Assert.IsFalse(String.IsNullOrEmpty(path), "Checking if NuGetExePath is null or empty");
 		}
 
 	}

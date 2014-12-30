@@ -9,8 +9,10 @@ namespace OvermanGroup.NuGet.Packager.Tasks
 {
 	public class CreateNuGetPackage : NuGetTask
 	{
-		private readonly Regex mPackageFileRegex = new Regex("(?i)(Successfully created package '(?<FilePath>.*?)'.)");
+		private static readonly Regex mPackageFileRegex = new Regex("(?i)(Successfully created package '(?<FilePath>.*?)'.)");
+
 		private ITaskItem mPackageOutput;
+		private ITaskItem mPackageSymbols;
 
 		#region Properties
 
@@ -46,8 +48,13 @@ namespace OvermanGroup.NuGet.Packager.Tasks
 		[Output]
 		public virtual ITaskItem PackageOutput
 		{
-			get { return mPackageOutput ?? (mPackageOutput = GetPackageOutput()); }
-			set { mPackageOutput = value; }
+			get { return mPackageOutput ?? (mPackageOutput = DeterminePackage(false)); }
+		}
+
+		[Output]
+		public virtual ITaskItem PackageSymbols
+		{
+			get { return mPackageSymbols ?? (mPackageSymbols = DeterminePackage(true)); }
 		}
 
 		#endregion
@@ -117,39 +124,50 @@ namespace OvermanGroup.NuGet.Packager.Tasks
 		{
 			base.LogEventsFromTextOutput(singleLine, messageImportance);
 
-			var item = mPackageOutput;
-			if (item != null && !String.IsNullOrEmpty(item.ItemSpec)) return;
-
 			var match = mPackageFileRegex.Match(singleLine);
 			if (!match.Success) return;
 
 			var file = match.Groups["FilePath"].Value;
-			Log.LogMessage(Constants.MessageImportance, "Detected creation of package '{0}' by parsing NuGet.exe output.", file);
+			Log.LogMessage(Constants.MessageImportance, "Found package '{0}' by parsing NuGet.exe output.", file);
 
-			mPackageOutput = new TaskItem(file);
-		}
-
-		public virtual ITaskItem GetPackageOutput()
-		{
-			var dir = String.IsNullOrEmpty(OutputDirectory) ? Environment.CurrentDirectory : OutputDirectory;
-			var files = Directory.GetFiles(dir, "*.nupkg");
-			switch (files.Length)
-			{
-				case 0:
-					Log.LogWarning("Unable to determine package output.");
-					return null;
-
-				case 1:
-					Log.LogMessage(Constants.MessageImportance, "Detected creation of package '{0}' from searching '*.nupkg' with a single result.", files[0]);
-					return new TaskItem(files[0]);
-			}
-
-			var prefix = Path.GetFileNameWithoutExtension(InputFile) ?? InputFile;
-			var file = files.Where(_ => _.StartsWith(prefix)).OrderByDescending(File.GetCreationTimeUtc).First();
-			Log.LogMessage(Constants.MessageImportance, "Detected creation of package '{0}' from searching '*.nupkg' with the latest result.", file);
+			var title = Path.GetFileNameWithoutExtension(file);
+			var isSymbols = title.EndsWith("symbols", StringComparison.OrdinalIgnoreCase);
 
 			var item = new TaskItem(file);
-			return item;
+			if (isSymbols)
+				mPackageSymbols = item;
+			else
+				mPackageOutput = item;
+		}
+
+		public virtual ITaskItem DeterminePackage(bool symbols)
+		{
+			if (ExitCode != 0)
+			{
+				Log.LogWarning("Unable to determine package since NuGet.exe exited with a non-zero code.");
+				return null;
+			}
+
+			var version = Version;
+			var title = Path.GetFileNameWithoutExtension(InputFile) ?? InputFile;
+			var filter = String.IsNullOrEmpty(version)
+				? title + "*.nupkg"
+				: title + "." + version + "*.nupkg";
+
+			var dir = String.IsNullOrEmpty(OutputDirectory)
+				? Environment.CurrentDirectory
+				: OutputDirectory;
+
+			Log.LogMessage(Constants.MessageImportance, "Searching for packages using filter '{0}' in directory '{1}'.", filter, dir);
+
+			var package = Directory
+				.EnumerateFiles(dir, filter, SearchOption.TopDirectoryOnly)
+				.Where(path => (Path.GetFileNameWithoutExtension(path) ?? path).EndsWith(".symbols", StringComparison.OrdinalIgnoreCase) == symbols)
+				.OrderByDescending(File.GetCreationTimeUtc)
+				.Select(_ => new TaskItem(_))
+				.FirstOrDefault();
+
+			return package;
 		}
 
 	}
