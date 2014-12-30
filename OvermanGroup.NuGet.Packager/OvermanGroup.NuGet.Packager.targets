@@ -71,6 +71,7 @@
 			MinClientVersion="$(OverPackMinClientVersion)"
 			ExtraArguments="$(OverPackExtraArguments)">
 			<Output TaskParameter="PackageOutput" ItemName="OverPackOutputFile" />
+			<Output TaskParameter="PackageSymbols" ItemName="OverPackSymbolsFile" />
 		</CreateNuGetPackage>
 
 		<PublishNuGetPackage

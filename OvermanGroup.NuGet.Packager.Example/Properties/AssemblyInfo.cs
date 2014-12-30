@@ -3,9 +3,9 @@ using System.Reflection;
 using System.Resources;
 using System.Runtime.InteropServices;
 
-[assembly: AssemblyTitle("OvermanGroup.NuGet.Packager")]
-[assembly: AssemblyProduct("OvermanGroup.NuGet.Packager")]
-[assembly: AssemblyDescription("MSBuild tasks for creating and publishing NuGet packages.")]
+[assembly: AssemblyTitle("OvermanGroup.NuGet.Packager.Example")]
+[assembly: AssemblyProduct("OvermanGroup.NuGet.Packager.Example")]
+[assembly: AssemblyDescription("Example NuGet package that was created with OvermanGroup.NuGet.Packager")]
 
 [assembly: AssemblyCompany("Overman Group, LLC.")]
 [assembly: AssemblyCopyright("Copyright © 2014 Overman Group, LLC.")]
@@ -23,7 +23,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 [assembly: CLSCompliant(true)]
 
-[assembly: Guid("1785d1f6-c412-4e7d-a1df-56ab686f2fdc")]
+[assembly: Guid("016dfc39-a91e-4c62-8778-592a39d325b2")]
 
 [assembly: AssemblyVersion("1.0.0.0")]
 [assembly: AssemblyFileVersion("1.0.0")]

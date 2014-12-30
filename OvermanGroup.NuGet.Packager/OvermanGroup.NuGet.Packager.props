@@ -1,6 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 	<PropertyGroup>
+		<!-- Place MSBuild properties below this comment... -->
+
 		<!--
 		Uncomment and override any of the following properties to customize how
 		your NuGet package is created and/or published. All of these properties
@@ -85,7 +87,7 @@
 		<OverPackExcludeEmptyDirectories Condition="'$(OverPackExcludeEmptyDirectories)' == ''">false</OverPackExcludeEmptyDirectories>
 			Prevents inclusion of empty directories when building the NuGet package.
 
-		<OverPackVerbosity Condition="'$(OverPackVerbosity)' == ''">normal</OverPackVerbosity>
+		<OverPackVerbosity Condition="'$(OverPackVerbosity)' == ''">detailed</OverPackVerbosity>
 			Specifies the amount of details to show from the command output: normal,
 			quiet, detailed. This property is used for both the 'pack' and 'push'
 			NuGet commands.

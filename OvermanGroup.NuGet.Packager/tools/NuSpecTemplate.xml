@@ -1,0 +1,39 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!--
+	See the following for help:
+	http://docs.nuget.org/docs/reference/nuspec-reference
+-->
+<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+	<metadata minClientVersion="2.8">
+		<id>$id$</id>
+		<title>$title$</title>
+		<version>$version$</version>
+
+		<!--
+		For the '$author$' replacement token to work, the 'AssemblyCompany'
+		attribute must be specified in AssemblyInfo.cs
+		-->
+		<owners>$author$</owners>
+		<authors>$author$</authors>
+		<copyright></copyright>
+
+		<!--
+		<iconUrl></iconUrl>
+		<projectUrl></projectUrl>
+		<licenseUrl></licenseUrl>
+		<requireLicenseAcceptance>false</requireLicenseAcceptance>
+		-->
+
+		<!--
+		<summary></summary>
+		<releaseNotes></releaseNotes>
+		-->
+
+		<!--
+		For the '$description$' replacement token to work, the 'AssemblyDescription'
+		attribute must be specified in AssemblyInfo.cs
+		-->
+		<description>$description$</description>
+		<tags></tags>
+	</metadata>
+</package>
