@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Diagnostics;
 using System.IO;
+using System.Reflection;
 using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -19,6 +21,7 @@ namespace OvermanGroup.NuGet.Packager.Test
 		protected Mock<IBuildEngine> mBuildEngineMock;
 		protected TaskLoggingHelper mLogger;
 		protected string mSolutionDir;
+		protected string mBasePath;
 
 		public virtual TestContext TestContext { get; set; }
 
@@ -35,6 +38,11 @@ namespace OvermanGroup.NuGet.Packager.Test
 		public virtual string SolutionDir
 		{
 			get { return mSolutionDir ?? (mSolutionDir = GetSolutionDir()); }
+		}
+
+		public virtual string BasePath
+		{
+			get { return mBasePath ?? (mBasePath = GetBasePath()); }
 		}
 
 		[TestInitialize]
@@ -65,6 +73,23 @@ namespace OvermanGroup.NuGet.Packager.Test
 			}
 			Assert.IsTrue(exists, "Checking if the solution directory was found ");
 			return dir;
+		}
+
+		public virtual string GetBasePath()
+		{
+			var assembly = Assembly.GetExecutingAssembly();
+			var assemblyConfigurationAttribute = assembly.GetCustomAttribute<AssemblyConfigurationAttribute>();
+			Assert.IsNotNull(assemblyConfigurationAttribute, "Checking AssemblyConfigurationAttribute");
+			var configurationName = assemblyConfigurationAttribute.Configuration;
+			Assert.IsFalse(String.IsNullOrEmpty(configurationName), "Checking ConfigurationName");
+
+			var solutionDir = SolutionDir;
+			var assemblyName = assembly.GetName();
+			var projectDir = Path.Combine(solutionDir, assemblyName.Name);
+			var baseDir = Path.Combine(projectDir, "bin", configurationName);
+			Assert.IsTrue(Directory.Exists(baseDir), "Checking if the base directory exists");
+
+			return baseDir;
 		}
 
 		public virtual string PrepareOutputDirectory()

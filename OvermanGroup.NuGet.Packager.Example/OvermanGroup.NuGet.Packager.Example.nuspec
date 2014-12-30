@@ -1,0 +1,24 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!--
+	See the following for help:
+	http://docs.nuget.org/docs/reference/nuspec-reference
+-->
+<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+	<metadata minClientVersion="2.8">
+		<id>$id$</id>
+		<title>$title$</title>
+		<version>$version$</version>
+
+		<owners>$author$</owners>
+		<authors>$author$</authors>
+		<copyright>Copyright © 2014 Overman Group, LLC. All rights reserved.</copyright>
+
+		<iconUrl>http://i59.tinypic.com/2hh0zg7.png</iconUrl>
+		<projectUrl>https://github.com/OvermanGroup/OvermanGroup.NuGet.Packager</projectUrl>
+		<licenseUrl>https://github.com/OvermanGroup/OvermanGroup.NuGet.Packager/blob/master/COPYRIGHT.txt</licenseUrl>
+		<requireLicenseAcceptance>false</requireLicenseAcceptance>
+
+		<description>$description$</description>
+		<tags></tags>
+	</metadata>
+</package>

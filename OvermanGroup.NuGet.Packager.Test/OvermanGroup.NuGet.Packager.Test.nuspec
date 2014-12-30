@@ -26,6 +26,6 @@
 
 	</metadata>
 	<files>
-		<file src="bin\*\OvermanGroup.NuGet.Packager*.dll" target="lib\net45" />
+		<file src="OvermanGroup.NuGet.Packager*.dll" target="lib\net45" />
 	</files>
 </package>

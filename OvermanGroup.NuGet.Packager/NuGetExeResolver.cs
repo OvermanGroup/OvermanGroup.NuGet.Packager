@@ -15,7 +15,7 @@ namespace OvermanGroup.NuGet.Packager
 
 		public NuGetExeResolver(TaskLoggingHelper logger, string solutionDir)
 		{
-			Condition.Requires(logger, "loggeer").IsNotNull();
+			Condition.Requires(logger, "logger").IsNotNull();
 			Condition.Requires(solutionDir, "solutionDir").IsNotNullOrEmpty();
 
 			Logger = logger;

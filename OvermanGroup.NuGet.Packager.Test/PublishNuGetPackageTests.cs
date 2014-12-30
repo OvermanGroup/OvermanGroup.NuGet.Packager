@@ -28,6 +28,7 @@ namespace OvermanGroup.NuGet.Packager.Test
 				SolutionDir = SolutionDir,
 				InputFile = input,
 				Verbosity = "quiet",
+				BasePath = BasePath,
 				OutputDirectory = outputDirectory,
 				Version = version,
 			};

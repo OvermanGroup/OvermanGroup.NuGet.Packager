@@ -22,6 +22,7 @@ namespace OvermanGroup.NuGet.Packager.Test
 				SolutionDir = SolutionDir,
 				InputFile = input,
 				Verbosity = "detailed",
+				BasePath = BasePath,
 				OutputDirectory = outputDirectory,
 				Symbols = false,
 			};
@@ -42,6 +43,7 @@ namespace OvermanGroup.NuGet.Packager.Test
 				SolutionDir = SolutionDir,
 				InputFile = input,
 				Verbosity = "detailed",
+				BasePath = BasePath,
 				OutputDirectory = outputDirectory,
 				Symbols = true,
 			};
@@ -69,6 +71,7 @@ namespace OvermanGroup.NuGet.Packager.Test
 				SolutionDir = SolutionDir,
 				InputFile = input,
 				Verbosity = "detailed",
+				BasePath = BasePath,
 				OutputDirectory = outputDirectory,
 				Version = version,
 				Symbols = false,
@@ -96,6 +99,7 @@ namespace OvermanGroup.NuGet.Packager.Test
 				SolutionDir = SolutionDir,
 				InputFile = input,
 				Verbosity = "detailed",
+				BasePath = BasePath,
 				OutputDirectory = outputDirectory,
 				Version = version,
 				Symbols = true,
@@ -118,6 +122,7 @@ namespace OvermanGroup.NuGet.Packager.Test
 				SolutionDir = SolutionDir,
 				InputFile = input,
 				Verbosity = "detailed",
+				BasePath = BasePath,
 				OutputDirectory = outputDirectory,
 				Symbols = false,
 			};
@@ -138,6 +143,7 @@ namespace OvermanGroup.NuGet.Packager.Test
 				SolutionDir = SolutionDir,
 				Verbosity = "detailed",
 				InputFile = input,
+				BasePath = BasePath,
 				OutputDirectory = outputDirectory,
 				Symbols = true,
 			};
@@ -159,6 +165,7 @@ namespace OvermanGroup.NuGet.Packager.Test
 				SolutionDir = SolutionDir,
 				InputFile = input,
 				Verbosity = "detailed",
+				BasePath = BasePath,
 				OutputDirectory = outputDirectory
 			};
 
