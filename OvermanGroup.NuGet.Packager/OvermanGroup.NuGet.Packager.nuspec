@@ -18,6 +18,11 @@
 		<description>MSBuild tasks for creating and publishing NuGet packages.</description>
 		<tags>nuget pack package tfs build msbuild automation</tags>
 
+		<releaseNotes>
+v1.0.1 - Updated package description.
+v1.0.0 - Initial release.
+		</releaseNotes>
+
 		<dependencies>
 			<dependency id="NuGet.CommandLine" version="[2.8.3,)" />
 		</dependencies>
