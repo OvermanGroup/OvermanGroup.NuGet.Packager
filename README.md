@@ -163,7 +163,12 @@ Specifies any additional arguments to pass to NuGet when invoking the 'push' com
 ```
 
 ## TFS BUILD INTEGRATION
-> TODO
+Since all the MSBuild properties check if they have already been specified, you can also make any customizations using TFS build definitions such as:
+- `/p:RunOverPack=true`
+- `/p:OverPackPublishToFolder=\\server\share\drop_folder\`
+
+Here is an example TFS Build Definition
+![OverPack Build Definition](images/OverPackBuildDefinition.png?raw=true)
 
 ## What's with the name?
 So "Overman Group" is an LLC that I created in college with the intent to someday start my own software company. Well 12 years later, I did nothing on that horizon and have been busy with my day-to-day engineering job. I prefixed this package with OvermanGroup solely for organizational purposes just in case there are naming conflicts with anyone else.
