@@ -1,5 +1,5 @@
 # OvermanGroup.NuGet.Packager
-MSBuild tasks for creating and publishing NuGet packages.
+This NuGet package adds configurable MSBuild tasks to your project so that you can easily create and publish NuGet packages automatically after your project is built.
 
 ## PURPOSE
 I found myself re-creating the same batch and powershell Post Build scripts to generate NuGet packages for my C# projects very often. When I first searched NuGet for existing tools to automate package creation, I wasn't pleased with the results. There were a bunch of existing packages that added a lot of bloat to my projects and weren't easy to configure. In the end, I wanted something very familiar to OctoPack which is used by Octopus Deploy in our environment. So this package was born and my very first contribution to NuGet. Hope you enjoy and please let me know any comments or suggestions.
