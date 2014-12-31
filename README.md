@@ -171,6 +171,9 @@ Since all the MSBuild properties check if they have already been specified, you 
 Here is an example TFS Build Definition
 ![OverPack Build Definition](images/OverPackBuildDefinition.png?raw=true)
 
+## FEEDBACK
+Please provide any feedback, comments, or issues to this GitHub project [here][7].
+
 ## What's with the name?
 So "Overman Group" is an LLC that I created in college with the intent to someday start my own software company. Well 12 years later, I did nothing on that horizon and have been busy with my day-to-day engineering job. I prefixed this package with OvermanGroup solely for organizational purposes just in case there are naming conflicts with anyone else.
 
@@ -180,3 +183,4 @@ So "Overman Group" is an LLC that I created in college with the intent to someda
 [4]: http://docs.nuget.org/docs/reference/nuspec-reference
 [5]: http://docs.nuget.org/docs/reference/nuspec-reference#Replacement_Tokens
 [6]: http://msdn.microsoft.com/en-us/library/hh850448.aspx
+[7]: https://github.com/OvermanGroup/OvermanGroup.NuGet.Packager/issues
