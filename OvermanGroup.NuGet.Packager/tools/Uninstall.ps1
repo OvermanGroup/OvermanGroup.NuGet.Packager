@@ -2,25 +2,26 @@
 
 $propsName = $package.Id + '.props'
 
-# Need to load MSBuild assembly if it's not loaded yet.
+# load the MSBuild assembly
 Add-Type -AssemblyName 'Microsoft.Build, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a'
 
-# Grab the loaded MSBuild project for the project
+# load the current MSBuild project
 $msbuild = [Microsoft.Build.Evaluation.ProjectCollection]::GlobalProjectCollection.GetLoadedProjects($project.FullName) | Select-Object -First 1
 
-# Find all the imports and targets added by this package.
+# find all the imports and targets added by this package
 $itemsToRemove = @()
 
-# Allow many in case a past package was incorrectly uninstalled
+# allow multiple items just in case a past package didn't uninstall correctly
 $itemsToRemove += $msbuild.Xml.Imports | Where-Object { $_.Project.EndsWith($propsName) }
 
-# Remove the elements and save the project
+# remove the items
 if ($itemsToRemove -and $itemsToRemove.length)
 {
 	foreach ($itemToRemove in $itemsToRemove)
 	{
-		$msbuild.Xml.RemoveChild($itemToRemove) | out-null
+		$msbuild.Xml.RemoveChild($itemToRemove) | Out-Null
 	}
 
+	Write-Host "Saving project"
 	$project.Save()
 }

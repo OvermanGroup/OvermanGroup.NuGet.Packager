@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics;
 using System.IO;
 using System.Reflection;
 using Microsoft.Build.Framework;
@@ -15,7 +14,7 @@ namespace OvermanGroup.NuGet.Packager.Test
 	[TestClass]
 	public abstract class TestHelper
 	{
-		protected const string ExpectedVersion = "1.0.0-test";
+		protected const string ExpectedVersion = "1.0.1-test";
 
 		protected readonly Random mRandom = new Random();
 		protected Mock<IBuildEngine> mBuildEngineMock;
@@ -108,7 +107,10 @@ namespace OvermanGroup.NuGet.Packager.Test
 			Assert.AreEqual(0, task.ExitCode, "Checking task ErrorCode");
 
 			var package = symbols ? task.PackageSymbols : task.PackageOutput;
-			VerifyPackageOutput(package);
+			var packagePath = VerifyPackageOutput(package);
+
+			if (!String.IsNullOrEmpty(expectedVersion))
+				VerifyPackageVersion(packagePath, expectedVersion);
 
 			return package;
 		}

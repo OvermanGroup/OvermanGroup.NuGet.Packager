@@ -3,15 +3,15 @@
 	<metadata minClientVersion="2.8">
 		<id>OvermanGroup.NuGet.Packager.Test</id>
 		<title>OvermanGroup.NuGet.Packager.Test</title>
-		<version>1.0.0-test</version>
+		<version>1.0.1-test</version>
 
 		<owners>Overman Group, LLC.</owners>
 		<authors>Overman Group, LLC.</authors>
 		<copyright>Copyright © 2014 Overman Group, LLC. All rights reserved.</copyright>
 
-		<iconUrl>http://i59.tinypic.com/2hh0zg7.png</iconUrl>
+		<iconUrl>https://raw.githubusercontent.com/OvermanGroup/OvermanGroup.NuGet.Packager/master/PackageIcon.png</iconUrl>
 		<projectUrl>https://github.com/OvermanGroup/OvermanGroup.NuGet.Packager</projectUrl>
-		<licenseUrl>https://github.com/OvermanGroup/OvermanGroup.NuGet.Packager/blob/master/COPYRIGHT.txt</licenseUrl>
+		<licenseUrl>https://raw.githubusercontent.com/OvermanGroup/OvermanGroup.NuGet.Packager/master/COPYRIGHT.txt</licenseUrl>
 		<requireLicenseAcceptance>false</requireLicenseAcceptance>
 
 		<summary>Unit Tests for OvermanGroup.NuGet.Packager</summary>

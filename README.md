@@ -1,5 +1,5 @@
 # OvermanGroup.NuGet.Packager
-MSBuild tasks for creating and publishing NuGet packages.
+This NuGet package adds configurable MSBuild tasks to your project so that you can easily create and publish NuGet packages automatically after your project is built.
 
 ## PURPOSE
 I found myself re-creating the same batch and powershell Post Build scripts to generate NuGet packages for my C# projects very often. When I first searched NuGet for existing tools to automate package creation, I wasn't pleased with the results. There were a bunch of existing packages that added a lot of bloat to my projects and weren't easy to configure. In the end, I wanted something very familiar to OctoPack which is used by Octopus Deploy in our environment. So this package was born and my very first contribution to NuGet. Hope you enjoy and please let me know any comments or suggestions.
@@ -74,7 +74,7 @@ Overrides the version number for the NuGet package. If not specified, uses the v
 ```
 
 ### OverPackExclude
-Specifies one or more wildcard patterns to exclude when creating the NuGet package. Separate multiple entries with a semicolon ';'.
+Specifies one or more wildcard patterns to exclude when creating the NuGet package. Separate multiple entries with a semicolon `;`
 ```
 <OverPackExclude Condition="'$(OverPackExclude)' == ''"></OverPackExclude>
 ```
@@ -171,6 +171,9 @@ Since all the MSBuild properties check if they have already been specified, you 
 Here is an example TFS Build Definition
 ![OverPack Build Definition](images/OverPackBuildDefinition.png?raw=true)
 
+## FEEDBACK
+Please provide any feedback, comments, or issues to this GitHub project [here][7].
+
 ## What's with the name?
 So "Overman Group" is an LLC that I created in college with the intent to someday start my own software company. Well 12 years later, I did nothing on that horizon and have been busy with my day-to-day engineering job. I prefixed this package with OvermanGroup solely for organizational purposes just in case there are naming conflicts with anyone else.
 
@@ -180,3 +183,4 @@ So "Overman Group" is an LLC that I created in college with the intent to someda
 [4]: http://docs.nuget.org/docs/reference/nuspec-reference
 [5]: http://docs.nuget.org/docs/reference/nuspec-reference#Replacement_Tokens
 [6]: http://msdn.microsoft.com/en-us/library/hh850448.aspx
+[7]: https://github.com/OvermanGroup/OvermanGroup.NuGet.Packager/issues

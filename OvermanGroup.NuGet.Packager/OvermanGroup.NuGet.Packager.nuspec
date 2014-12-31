@@ -3,20 +3,27 @@
 	<metadata minClientVersion="2.8">
 		<id>OvermanGroup.NuGet.Packager</id>
 		<title>OvermanGroup.NuGet.Packager</title>
-		<version>1.0.0</version>
+		<version>1.0.1</version>
 
 		<owners>Overman Group, LLC.</owners>
 		<authors>Overman Group, LLC.</authors>
 		<copyright>Copyright © 2014 Overman Group, LLC. All rights reserved.</copyright>
 
-		<iconUrl>http://i59.tinypic.com/2hh0zg7.png</iconUrl>
+		<iconUrl>https://raw.githubusercontent.com/OvermanGroup/OvermanGroup.NuGet.Packager/master/PackageIcon.png</iconUrl>
 		<projectUrl>https://github.com/OvermanGroup/OvermanGroup.NuGet.Packager</projectUrl>
-		<licenseUrl>https://github.com/OvermanGroup/OvermanGroup.NuGet.Packager/blob/master/COPYRIGHT.txt</licenseUrl>
+		<licenseUrl>https://raw.githubusercontent.com/OvermanGroup/OvermanGroup.NuGet.Packager/master/COPYRIGHT.txt</licenseUrl>
 		<requireLicenseAcceptance>false</requireLicenseAcceptance>
 
-		<summary>MSBuild tasks for creating NuGet packages.</summary>
-		<description>MSBuild tasks for creating NuGet packages.</description>
-		<tags>nuget pack package tfs build msbuild automation</tags>
+		<summary>MSBuild tasks for creating and publishing NuGet packages.</summary>
+		<description>This NuGet package adds configurable MSBuild tasks to your project so that you can easily create and publish NuGet packages automatically after your project is built.</description>
+		<tags>nuget pack push package build msbuild automation</tags>
+
+		<releaseNotes>
+			<![CDATA[
+v1.0.1 - Improved scripts and updated metadata (description, icon, and readme).
+v1.0.0 - Initial release.
+]]>
+		</releaseNotes>
 
 		<dependencies>
 			<dependency id="NuGet.CommandLine" version="[2.8.3,)" />

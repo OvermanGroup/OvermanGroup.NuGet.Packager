@@ -5,7 +5,7 @@ using System.Runtime.InteropServices;
 
 [assembly: AssemblyTitle("OvermanGroup.NuGet.Packager")]
 [assembly: AssemblyProduct("OvermanGroup.NuGet.Packager")]
-[assembly: AssemblyDescription("MSBuild tasks for creating and publishing NuGet packages.")]
+[assembly: AssemblyDescription("This NuGet package adds configurable MSBuild tasks to your project so that you can easily create and publish NuGet packages automatically after your project is built.")]
 
 [assembly: AssemblyCompany("Overman Group, LLC.")]
 [assembly: AssemblyCopyright("Copyright © 2014 Overman Group, LLC.")]
@@ -25,6 +25,6 @@ using System.Runtime.InteropServices;
 
 [assembly: Guid("1785d1f6-c412-4e7d-a1df-56ab686f2fdc")]
 
-[assembly: AssemblyVersion("1.0.0.0")]
-[assembly: AssemblyFileVersion("1.0.0")]
-[assembly: AssemblyInformationalVersion("1.0.0")]
+[assembly: AssemblyVersion("1.0.1.0")]
+[assembly: AssemblyFileVersion("1.0.1")]
+[assembly: AssemblyInformationalVersion("1.0.1")]
