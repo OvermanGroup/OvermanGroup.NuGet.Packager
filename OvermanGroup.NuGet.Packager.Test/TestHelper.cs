@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
@@ -14,7 +15,7 @@ namespace OvermanGroup.NuGet.Packager.Test
 	[TestClass]
 	public abstract class TestHelper
 	{
-		protected const string ExpectedVersion = "1.0.1-test";
+		protected const string ExpectedVersion = "1.1.0-test";
 
 		protected readonly Random mRandom = new Random();
 		protected Mock<IBuildEngine> mBuildEngineMock;
@@ -107,8 +108,13 @@ namespace OvermanGroup.NuGet.Packager.Test
 			Assert.AreEqual(0, task.ExitCode, "Checking task ErrorCode");
 
 			var package = symbols ? task.PackageSymbols : task.PackageOutput;
-			var packagePath = VerifyPackageOutput(package);
+			Assert.IsNotNull(package);
+			Assert.IsNotNull(task.FilesWritten);
 
+			var isWritten = task.FilesWritten.Any(_ => _.ItemSpec == package.ItemSpec);
+			Assert.IsTrue(isWritten, "Checking if package exists in FileWritten array");
+
+			var packagePath = VerifyPackageOutput(package);
 			if (!String.IsNullOrEmpty(expectedVersion))
 				VerifyPackageVersion(packagePath, expectedVersion);
 

@@ -13,6 +13,7 @@ namespace OvermanGroup.NuGet.Packager.Tasks
 
 		private ITaskItem mPackageOutput;
 		private ITaskItem mPackageSymbols;
+		private ITaskItem[] mFilesWritten;
 
 		#region Properties
 
@@ -55,6 +56,12 @@ namespace OvermanGroup.NuGet.Packager.Tasks
 		public virtual ITaskItem PackageSymbols
 		{
 			get { return mPackageSymbols ?? (mPackageSymbols = DeterminePackage(true)); }
+		}
+
+		[Output]
+		public virtual ITaskItem[] FilesWritten
+		{
+			get { return mFilesWritten ?? (mFilesWritten = new[] { PackageOutput, PackageSymbols }.Where(_ => _ != null).ToArray()); }
 		}
 
 		#endregion
@@ -147,6 +154,11 @@ namespace OvermanGroup.NuGet.Packager.Tasks
 				Log.LogWarning("Unable to determine package since NuGet.exe exited with a non-zero code.");
 				return null;
 			}
+			if (symbols && !Symbols)
+			{
+				// don't bother searching for symbols if we didn't generate them
+				return null;
+			}
 
 			var version = Version;
 			var title = Path.GetFileNameWithoutExtension(InputFile) ?? InputFile;
@@ -158,7 +170,7 @@ namespace OvermanGroup.NuGet.Packager.Tasks
 				? Environment.CurrentDirectory
 				: OutputDirectory;
 
-			Log.LogMessage(Constants.MessageImportance, "Searching for packages using filter '{0}' in directory '{1}'.", filter, dir);
+			Log.LogMessage(Constants.MessageImportance, "Searching for packages using filter '{0}' in directory '{1}' with symbols={2}.", filter, dir, symbols);
 
 			var package = Directory
 				.EnumerateFiles(dir, filter, SearchOption.TopDirectoryOnly)
