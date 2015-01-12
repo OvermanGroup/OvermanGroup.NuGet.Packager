@@ -3,17 +3,17 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using CuttingEdge.Conditions;
-using Microsoft.Build.Utilities;
 using NuGet.Packaging;
 
 namespace OvermanGroup.NuGet.Packager
 {
 	public class NuGetExeResolver
 	{
-		public virtual TaskLoggingHelper Logger { get; private set; }
+		public virtual ILogger Logger { get; private set; }
+
 		public virtual string SolutionDir { get; private set; }
 
-		public NuGetExeResolver(TaskLoggingHelper logger, string solutionDir)
+		public NuGetExeResolver(ILogger logger, string solutionDir)
 		{
 			Condition.Requires(logger, "logger").IsNotNull();
 			Condition.Requires(solutionDir, "solutionDir").IsNotNullOrEmpty();
@@ -24,19 +24,19 @@ namespace OvermanGroup.NuGet.Packager
 
 		public virtual string GetNuGetExePath()
 		{
-			Logger.LogMessage(Constants.MessageImportance, "Attempting to locate NuGet.exe for '{0}'.", SolutionDir);
+			Logger.LogMessage("Attempting to locate NuGet.exe for '{0}'.", SolutionDir);
 
 			string nuGetExePath;
 
 			if (TryFromPackages(out nuGetExePath))
 			{
-				Logger.LogMessage(Constants.MessageImportance, "Found NuGet.exe from packages at location '{0}'.", nuGetExePath);
+				Logger.LogMessage("Found NuGet.exe from packages at location '{0}'.", nuGetExePath);
 				return nuGetExePath;
 			}
 
 			if (TryFromSystem(out nuGetExePath))
 			{
-				Logger.LogMessage(Constants.MessageImportance, "Found NuGet.exe from system at location '{0}'.", nuGetExePath);
+				Logger.LogMessage("Found NuGet.exe from system at location '{0}'.", nuGetExePath);
 				return nuGetExePath;
 			}
 

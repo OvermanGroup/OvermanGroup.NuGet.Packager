@@ -3,7 +3,7 @@
 	<metadata minClientVersion="2.8">
 		<id>OvermanGroup.NuGet.Packager</id>
 		<title>OvermanGroup.NuGet.Packager</title>
-		<version>1.0.1</version>
+		<version>1.1.0</version>
 
 		<owners>Overman Group, LLC.</owners>
 		<authors>Overman Group, LLC.</authors>
@@ -20,6 +20,7 @@
 
 		<releaseNotes>
 			<![CDATA[
+v1.1.0 - Added OverPackDependsOn and support for cleaning of generated files.
 v1.0.1 - Improved scripts and updated metadata (description, icon, and readme).
 v1.0.0 - Initial release.
 ]]>

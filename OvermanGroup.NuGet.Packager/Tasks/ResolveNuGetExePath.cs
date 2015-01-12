@@ -14,7 +14,8 @@ namespace OvermanGroup.NuGet.Packager.Tasks
 
 		public override bool Execute()
 		{
-			var resolver = new NuGetExeResolver(Log, SolutionDir);
+			var logger = new Logger(BuildEngine, MessageImportance.High);
+			var resolver = new NuGetExeResolver(logger, SolutionDir);
 			var path = resolver.GetNuGetExePath();
 			if (String.IsNullOrEmpty(path)) return false;
 

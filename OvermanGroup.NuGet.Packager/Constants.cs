@@ -1,6 +1,4 @@
-﻿using Microsoft.Build.Framework;
-
-namespace OvermanGroup.NuGet.Packager
+﻿namespace OvermanGroup.NuGet.Packager
 {
 	internal static class Constants
 	{
@@ -10,7 +8,5 @@ namespace OvermanGroup.NuGet.Packager
 		public const string NuGetFileName = "NuGet.exe";
 		public const string NuGetPackageName = "NuGet.CommandLine";
 		public const string PackagesFileName = "packages.config";
-
-		public const MessageImportance MessageImportance = Microsoft.Build.Framework.MessageImportance.Normal;
 	}
 }
