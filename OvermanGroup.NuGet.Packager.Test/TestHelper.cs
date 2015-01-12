@@ -3,7 +3,6 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using Microsoft.Build.Framework;
-using Microsoft.Build.Utilities;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using NuGet.Packaging;
@@ -19,7 +18,7 @@ namespace OvermanGroup.NuGet.Packager.Test
 
 		protected readonly Random mRandom = new Random();
 		protected Mock<IBuildEngine> mBuildEngineMock;
-		protected TaskLoggingHelper mLogger;
+		protected ILogger mLogger;
 		protected string mSolutionDir;
 		protected string mBasePath;
 
@@ -30,9 +29,9 @@ namespace OvermanGroup.NuGet.Packager.Test
 			get { return mBuildEngineMock.Object; }
 		}
 
-		public virtual TaskLoggingHelper Logger
+		public virtual ILogger Logger
 		{
-			get { return mLogger ?? (mLogger = new TaskLoggingHelper(BuildEngine, "TestHelper")); }
+			get { return mLogger ?? (mLogger = new Logger(BuildEngine, MessageImportance.High)); }
 		}
 
 		public virtual string SolutionDir

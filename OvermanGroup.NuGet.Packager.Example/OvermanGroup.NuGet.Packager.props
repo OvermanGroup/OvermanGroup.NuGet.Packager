@@ -3,6 +3,7 @@
 	<PropertyGroup>
 		<!-- Place MSBuild properties below this comment... -->
 		<RunOverPack Condition="'$(RunOverPack)'==''">true</RunOverPack>
+		<OverPackSymbols Condition="'$(OverPackSymbols)' == ''">true</OverPackSymbols>
 		<OverPackVerbosity Condition="'$(OverPackVerbosity)' == ''">detailed</OverPackVerbosity>
 
 		<!--

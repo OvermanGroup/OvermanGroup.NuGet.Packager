@@ -1,4 +1,5 @@
-﻿using Microsoft.Build.Framework;
+﻿using System.IO;
+using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
 
 namespace OvermanGroup.NuGet.Packager.Tasks
@@ -22,20 +23,25 @@ namespace OvermanGroup.NuGet.Packager.Tasks
 
 		#endregion
 
-		protected override void LogArguments(MessageImportance importance)
+		protected override string NuGetVerb
 		{
-			Log.LogMessage(importance, "PackagePath: {0}", PackagePath);
-			Log.LogMessage(importance, "Source: {0}", Source);
-			Log.LogMessage(importance, "ApiKey: {0}", ApiKey);
-			Log.LogMessage(importance, "Verbosity: {0}", Verbosity);
-			Log.LogMessage(importance, "ConfigFile: {0}", ConfigFile);
-			Log.LogMessage(importance, "PushArguments: {0}", PushArguments);
+			get { return "push"; }
+		}
+
+		protected override void LogArguments(LogArgumentHandler logger)
+		{
+			logger("PackagePath", PackagePath);
+			logger("Source", Source);
+			logger("ApiKey", ApiKey);
+			logger("Verbosity", Verbosity);
+			logger("ConfigFile", ConfigFile);
+			logger("PushArguments", PushArguments);
 		}
 
 		protected override string GenerateCommandLineCommands()
 		{
 			var builder = new CommandLineBuilder();
-			builder.AppendSwitch("push");
+			builder.AppendSwitch(NuGetVerb);
 
 			builder.AppendFileNameIfNotNull(PackagePath);
 			builder.AppendSwitch("-NonInteractive");
@@ -48,5 +54,16 @@ namespace OvermanGroup.NuGet.Packager.Tasks
 			return builder.ToString();
 		}
 
+		public override bool Execute()
+		{
+			var name = Path.GetFileName(PackagePath.ItemSpec);
+			Logger.LogMessage(MainMessageImportance, "Publishing NuGet package '{0}'...", name);
+
+			var success = base.Execute();
+			if (success)
+				Logger.LogMessage(MainMessageImportance, "Successfully published NuGet package to '{0}'.", Source);
+
+			return success;
+		}
 	}
 }

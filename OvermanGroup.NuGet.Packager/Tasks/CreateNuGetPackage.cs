@@ -40,8 +40,6 @@ namespace OvermanGroup.NuGet.Packager.Tasks
 
 		public virtual bool ExcludeEmptyDirectories { get; set; }
 
-		public virtual string Verbosity { get; set; }
-
 		public virtual string MinClientVersion { get; set; }
 
 		public virtual string ExtraArguments { get; set; }
@@ -66,32 +64,37 @@ namespace OvermanGroup.NuGet.Packager.Tasks
 
 		#endregion
 
-		protected override void LogArguments(MessageImportance importance)
+		protected override string NuGetVerb
+		{
+			get { return "pack"; }
+		}
+
+		protected override void LogArguments(LogArgumentHandler logger)
 		{
 			var excludes = String.Join(";", (Exclude ?? Enumerable.Empty<ITaskItem>())
 				.Select(_ => _.ItemSpec)
 				.ToArray());
 
-			Log.LogMessage(importance, "InputFile: {0}", InputFile);
-			Log.LogMessage(importance, "OutputDirectory: {0}", OutputDirectory);
-			Log.LogMessage(importance, "BasePath: {0}", BasePath);
-			Log.LogMessage(importance, "Version: {0}", Version);
-			Log.LogMessage(importance, "Exclude: {0}", excludes);
-			Log.LogMessage(importance, "Symbols: {0}", Symbols);
-			Log.LogMessage(importance, "Tool: {0}", Tool);
-			Log.LogMessage(importance, "NoDefaultExcludes: {0}", NoDefaultExcludes);
-			Log.LogMessage(importance, "NoPackageAnalysis: {0}", NoPackageAnalysis);
-			Log.LogMessage(importance, "IncludeReferencedProjects: {0}", IncludeReferencedProjects);
-			Log.LogMessage(importance, "ExcludeEmptyDirectories: {0}", ExcludeEmptyDirectories);
-			Log.LogMessage(importance, "Verbosity: {0}", Verbosity);
-			Log.LogMessage(importance, "MinClientVersion: {0}", MinClientVersion);
-			Log.LogMessage(importance, "ExtraArguments: {0}", ExtraArguments);
+			logger("InputFile", InputFile);
+			logger("OutputDirectory", OutputDirectory);
+			logger("BasePath", BasePath);
+			logger("Version", Version);
+			logger("Exclude", excludes);
+			logger("Symbols", Symbols);
+			logger("Tool", Tool);
+			logger("NoDefaultExcludes", NoDefaultExcludes);
+			logger("NoPackageAnalysis", NoPackageAnalysis);
+			logger("IncludeReferencedProjects", IncludeReferencedProjects);
+			logger("ExcludeEmptyDirectories", ExcludeEmptyDirectories);
+			logger("Verbosity", Verbosity);
+			logger("MinClientVersion", MinClientVersion);
+			logger("ExtraArguments", ExtraArguments);
 		}
 
 		protected override string GenerateCommandLineCommands()
 		{
 			var builder = new CommandLineBuilder();
-			builder.AppendSwitch("pack");
+			builder.AppendSwitch(NuGetVerb);
 
 			// We don't allow the 'Build' argument because an infinite loop will occur
 			// because Build will trigger our Post-Build which then will trigger
@@ -135,7 +138,7 @@ namespace OvermanGroup.NuGet.Packager.Tasks
 			if (!match.Success) return;
 
 			var file = match.Groups["FilePath"].Value;
-			Log.LogMessage(Constants.MessageImportance, "Found package '{0}' by parsing NuGet.exe output.", file);
+			Logger.LogMessage(messageImportance, "Found package '{0}' by parsing NuGet.exe output.", file);
 
 			var title = Path.GetFileNameWithoutExtension(file);
 			var isSymbols = title.EndsWith("symbols", StringComparison.OrdinalIgnoreCase);
@@ -151,7 +154,7 @@ namespace OvermanGroup.NuGet.Packager.Tasks
 		{
 			if (ExitCode != 0)
 			{
-				Log.LogWarning("Unable to determine package since NuGet.exe exited with a non-zero code.");
+				Logger.LogWarning("Unable to determine package since NuGet.exe exited with a non-zero code.");
 				return null;
 			}
 			if (symbols && !Symbols)
@@ -170,7 +173,7 @@ namespace OvermanGroup.NuGet.Packager.Tasks
 				? Environment.CurrentDirectory
 				: OutputDirectory;
 
-			Log.LogMessage(Constants.MessageImportance, "Searching for packages using filter '{0}' in directory '{1}' with symbols={2}.", filter, dir, symbols);
+			Logger.LogMessage("Searching for packages using filter '{0}' in directory '{1}' with symbols={2}.", filter, dir, symbols);
 
 			var package = Directory
 				.EnumerateFiles(dir, filter, SearchOption.TopDirectoryOnly)
@@ -180,6 +183,22 @@ namespace OvermanGroup.NuGet.Packager.Tasks
 				.FirstOrDefault();
 
 			return package;
+		}
+
+		public override bool Execute()
+		{
+			var name = Path.GetFileName(InputFile);
+			Logger.LogMessage(MainMessageImportance, "Creating NuGet package for '{0}'...", name);
+
+			var success = base.Execute();
+			if (!success) return false;
+
+			foreach (var item in FilesWritten)
+			{
+				Logger.LogMessage(MainMessageImportance, "Successfully created NuGet package '{0}'.", item);
+			}
+
+			return true;
 		}
 
 	}

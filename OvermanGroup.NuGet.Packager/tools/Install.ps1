@@ -19,18 +19,44 @@ if (!$propsImport) {
 	$propsImport.Condition = "Exists('$propsName')"
 }
 
-# make sure our targets import was added
+#
+# Make sure our targets import was added
+#
 $targetsImport = $msbuild.Xml.Imports | Where-Object { $_.Project.EndsWith($targetsName) } | Select-Object -First 1
 if (!$targetsImport) {
 	throw "ERROR: Cannot find $targetsName. Please verify that $package.Id was installed."
 }
 
-# make sure the props are immediately above the targets import
+#
+# OverPackBookmark
+# We use a dummy target to make sure our import remains at the same exact line
+# in the MSBuild file. This is necessary when clients upgrade their package
+# which causes an uninstall and reinstall of the package and normally would
+# re-add the package to bottom vs the same location. We do this so that if the
+# client added pre/post build events, then their targets would always be after
+# our import.
+#
+$bookmark = $msbuild.Xml.Targets | Where-Object { $_.Name -eq "OverPackBookmark" } | Select-Object -First 1
+if (!$bookmark) {
+	Write-Host "Adding new bookmark for $targetsName"
+	$bookmark = $msbuild.Xml.CreateTargetElement("OverPackBookmark")
+	$msbuild.Xml.InsertBeforeChild($bookmark, $targetsImport)
+} elseif ($bookmark.NextSibling -ne $targetsImport) {
+	Write-Host "Moving $targetsName below bookmark"
+	$targetsImport.Parent.RemoveChild($targetsImport)
+	$msbuild.Xml.InsertAfterChild($targetsImport, $bookmark)
+}
+
+#
+# Make sure the props are immediately above the targets import
+#
 Write-Host "Moving $propsName import above $targetsName"
 $propsImport.Parent.RemoveChild($propsImport)
-$msbuild.Xml.InsertBeforeChild($propsImport, $targetsImport);
+$msbuild.Xml.InsertBeforeChild($propsImport, $targetsImport)
 
-# check if the project is missing a NuSpec
+#
+# Check if the project is missing a NuSpec
+#
 $nuspec = $project.ProjectItems | Where-Object { $_.Name.EndsWith(".nuspec", "OrdinalIgnoreCase") } | Select-Object -First 1
 if (!$nuspec) {
 	$projectPath = Get-Item ($project.FullName)

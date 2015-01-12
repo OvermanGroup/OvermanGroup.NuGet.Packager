@@ -5,6 +5,8 @@ using Microsoft.Build.Utilities;
 
 namespace OvermanGroup.NuGet.Packager.Tasks
 {
+	public delegate void LogArgumentHandler(string argumentName, object argumentValue);
+
 	public abstract class NuGetTask : ToolTask
 	{
 		private string mNuGetExePathSpecified;
@@ -13,8 +15,14 @@ namespace OvermanGroup.NuGet.Packager.Tasks
 		// the same path to NuGet, so optimize the resolution logic.
 		private static string mNuGetExePathResolved;
 
+		private ILogger mLogger;
+		private MessageImportance? mMessageImportance;
+		private MessageImportance? mMainMessageImportance;
+
 		[Required]
 		public virtual string SolutionDir { get; set; }
+
+		public virtual string Verbosity { get; set; }
 
 		public virtual string NuGetExePath
 		{
@@ -22,9 +30,65 @@ namespace OvermanGroup.NuGet.Packager.Tasks
 			set { mNuGetExePathSpecified = value; }
 		}
 
+		protected virtual ILogger Logger
+		{
+			get { return mLogger ?? (mLogger = new Logger(BuildEngine, MessageImportance)); }
+		}
+
+		protected virtual MessageImportance MainMessageImportance
+		{
+			get
+			{
+				return (mMainMessageImportance ?? (mMainMessageImportance =
+					String.Equals(Verbosity, "quiet", StringComparison.OrdinalIgnoreCase)
+						? MessageImportance.Low
+						: MessageImportance.High)).Value;
+			}
+		}
+
+		protected virtual MessageImportance MessageImportance
+		{
+			get
+			{
+				if (mMessageImportance.HasValue)
+					return mMessageImportance.Value;
+
+				var messageImportance = MessageImportance.Normal;
+				switch ((Verbosity ?? String.Empty).ToLowerInvariant())
+				{
+					case "detailed":
+						messageImportance = MessageImportance.High;
+						break;
+
+					case "normal":
+						messageImportance = MessageImportance.Normal;
+						break;
+
+					case "quiet:":
+						messageImportance = MessageImportance.Low;
+						break;
+				}
+
+				mMessageImportance = messageImportance;
+				return messageImportance;
+			}
+		}
+
 		protected override string ToolName
 		{
 			get { return Constants.NuGetFileName; }
+		}
+
+		public override string ToolExe
+		{
+			get { return Constants.NuGetFileName; }
+		}
+
+		protected override bool ValidateParameters()
+		{
+			StandardErrorImportance = "high";
+			StandardOutputImportance = MessageImportance.ToString();
+			return true;
 		}
 
 		protected override string GenerateFullPathToTool()
@@ -32,7 +96,7 @@ namespace OvermanGroup.NuGet.Packager.Tasks
 			var nuGetExePath = mNuGetExePathSpecified;
 			if (!String.IsNullOrEmpty(nuGetExePath) && File.Exists(nuGetExePath))
 			{
-				Log.LogMessage(Constants.MessageImportance, "Using NuGet.exe from '{0}'.", nuGetExePath);
+				Logger.LogMessage(MessageImportance, "Using NuGet.exe from '{0}'.", nuGetExePath);
 				mNuGetExePathResolved = nuGetExePath;
 				return nuGetExePath;
 			}
@@ -41,7 +105,7 @@ namespace OvermanGroup.NuGet.Packager.Tasks
 			if (!String.IsNullOrEmpty(nuGetExePath) && File.Exists(nuGetExePath))
 				return nuGetExePath;
 
-			var resolver = new NuGetExeResolver(Log, SolutionDir);
+			var resolver = new NuGetExeResolver(Logger, SolutionDir);
 			nuGetExePath = resolver.GetNuGetExePath();
 			mNuGetExePathResolved = nuGetExePath;
 
@@ -50,20 +114,26 @@ namespace OvermanGroup.NuGet.Packager.Tasks
 
 		protected override int ExecuteTool(string pathToTool, string responseFileCommands, string commandLineCommands)
 		{
-			const MessageImportance importance = Constants.MessageImportance;
+			var separator = new String('=', 80);
+			LogArgumentHandler logger = (name, value) => Logger.LogMessage("{0}='{1}'", name, value);
 
-			Log.LogMessage(importance, "---- Arguments ----");
-			Log.LogMessage(importance, "SolutionDir: {0}", SolutionDir);
-			Log.LogMessage(importance, "NuGetExePath (specified): {0}", mNuGetExePathSpecified);
-			Log.LogMessage(importance, "NuGetExePath (resolved): {0}", mNuGetExePathResolved);
-			LogArguments(importance);
-			Log.LogMessage(importance, "Tool Task Path: {0}", pathToTool);
-			Log.LogMessage(importance, "Tool Task Arguments: {0}", commandLineCommands);
-			Log.LogMessage(importance, "-------------------");
+			Logger.LogMessage(separator);
+			logger("SolutionDir", SolutionDir);
+			logger("NuGetExePathSpecified", mNuGetExePathSpecified);
+			logger("NuGetExePathResolved", mNuGetExePathResolved);
+			LogArguments(logger);
 
-			return base.ExecuteTool(pathToTool, responseFileCommands, commandLineCommands);
+			Logger.LogMessage(separator);
+			Logger.LogMessage(pathToTool + commandLineCommands);
+			Logger.LogMessage(separator);
+			var retval = base.ExecuteTool(pathToTool, responseFileCommands, commandLineCommands);
+			Logger.LogMessage(separator);
+
+			return retval;
 		}
 
-		protected abstract void LogArguments(MessageImportance importance);
+		protected abstract string NuGetVerb { get; }
+
+		protected abstract void LogArguments(LogArgumentHandler logger);
 	}
 }
