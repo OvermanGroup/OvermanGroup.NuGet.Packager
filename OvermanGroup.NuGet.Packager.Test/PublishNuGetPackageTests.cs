@@ -31,6 +31,7 @@ namespace OvermanGroup.NuGet.Packager.Test
 				BasePath = BasePath,
 				OutputDirectory = outputDirectory,
 				Version = version,
+				ExtraArguments = "-Prop Configuration=" + Configuration
 			};
 
 			var package = VerifyOutput(task, false, version);
@@ -50,6 +51,7 @@ namespace OvermanGroup.NuGet.Packager.Test
 				PackagePath = package,
 				Source = source,
 				Verbosity = "detailed",
+				PushArguments = "-Prop Configuration=" + Configuration
 			};
 
 			var success = task.Execute();
