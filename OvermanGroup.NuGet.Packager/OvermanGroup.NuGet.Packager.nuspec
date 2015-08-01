@@ -34,9 +34,9 @@ v1.0.0 - Initial release.
 		<file src="OvermanGroup.NuGet.Packager.props" target="content" />
 
 		<file src="tools\*" target="tools" />
-		<file src="*.dll" target="tools" />
+		<file src="bin\$Configuration$\*.dll" target="tools" />
 
-		<file src="COPYRIGHT.txt" />
-		<file src="LICENSE.txt" />
+		<file src="bin\$Configuration$\COPYRIGHT.txt" />
+		<file src="bin\$Configuration$\LICENSE.txt" />
 	</files>
 </package>
