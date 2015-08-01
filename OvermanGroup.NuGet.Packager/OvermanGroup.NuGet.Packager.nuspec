@@ -3,11 +3,12 @@
 	<metadata minClientVersion="2.8">
 		<id>OvermanGroup.NuGet.Packager</id>
 		<title>OvermanGroup.NuGet.Packager</title>
-		<version>1.2.0</version>
+
+		<version>$version$</version>
 
 		<owners>Overman Group, LLC.</owners>
 		<authors>Overman Group, LLC.</authors>
-		<copyright>Copyright © 2015 Overman Group, LLC. All rights reserved.</copyright>
+		<copyright>Copyright © $year$ Overman Group, LLC. All rights reserved.</copyright>
 
 		<iconUrl>https://raw.githubusercontent.com/OvermanGroup/OvermanGroup.NuGet.Packager/master/PackageIcon.png</iconUrl>
 		<projectUrl>https://github.com/OvermanGroup/OvermanGroup.NuGet.Packager</projectUrl>
