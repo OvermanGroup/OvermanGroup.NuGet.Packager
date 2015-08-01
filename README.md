@@ -1,3 +1,7 @@
+<a href="https://teamcity.bixbots.com/viewType.html?buildTypeId=Overman_NuGetPackager_Build&guest=1" target="_blank">
+  <img src="https://img.shields.io/teamcity/https/teamcity.bixbots.com/s/Overman_NuGetPackager_Build.svg?label=TeamCity" />
+</a>
+
 # OvermanGroup.NuGet.Packager
 This NuGet package adds configurable MSBuild tasks to your project so that you can easily create and publish NuGet packages automatically after your project is built.
 
