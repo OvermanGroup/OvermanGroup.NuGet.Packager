@@ -20,11 +20,13 @@ namespace OvermanGroup.NuGet.Packager.Test
 			{
 				BuildEngine = BuildEngine,
 				SolutionDir = SolutionDir,
+				ProjectDir = ProjectDir,
 				InputFile = input,
 				Verbosity = "detailed",
 				BasePath = BasePath,
 				OutputDirectory = outputDirectory,
 				Symbols = false,
+				ExtraArguments = "-Prop Configuration=" + Configuration
 			};
 
 			VerifyOutput(task, false);
@@ -41,11 +43,13 @@ namespace OvermanGroup.NuGet.Packager.Test
 			{
 				BuildEngine = BuildEngine,
 				SolutionDir = SolutionDir,
+				ProjectDir = ProjectDir,
 				InputFile = input,
 				Verbosity = "detailed",
 				BasePath = BasePath,
 				OutputDirectory = outputDirectory,
 				Symbols = true,
+				ExtraArguments = "-Prop Configuration=" + Configuration
 			};
 
 			VerifyOutput(task, false);
@@ -69,12 +73,14 @@ namespace OvermanGroup.NuGet.Packager.Test
 			{
 				BuildEngine = BuildEngine,
 				SolutionDir = SolutionDir,
+				ProjectDir = ProjectDir,
 				InputFile = input,
 				Verbosity = "detailed",
 				BasePath = BasePath,
 				OutputDirectory = outputDirectory,
 				Version = version,
 				Symbols = false,
+				ExtraArguments = "-Prop Configuration=" + Configuration
 			};
 
 			VerifyOutput(task, false, version);
@@ -97,12 +103,14 @@ namespace OvermanGroup.NuGet.Packager.Test
 			{
 				BuildEngine = BuildEngine,
 				SolutionDir = SolutionDir,
+				ProjectDir = ProjectDir,
 				InputFile = input,
 				Verbosity = "detailed",
 				BasePath = BasePath,
 				OutputDirectory = outputDirectory,
 				Version = version,
 				Symbols = true,
+				ExtraArguments = "-Prop Configuration=" + Configuration
 			};
 
 			VerifyOutput(task, false, version);
@@ -120,11 +128,13 @@ namespace OvermanGroup.NuGet.Packager.Test
 			{
 				BuildEngine = BuildEngine,
 				SolutionDir = SolutionDir,
+				ProjectDir = ProjectDir,
 				InputFile = input,
 				Verbosity = "detailed",
 				BasePath = BasePath,
 				OutputDirectory = outputDirectory,
 				Symbols = false,
+				ExtraArguments = "-Prop Configuration=" + Configuration
 			};
 
 			VerifyOutput(task, false);
@@ -141,11 +151,13 @@ namespace OvermanGroup.NuGet.Packager.Test
 			{
 				BuildEngine = BuildEngine,
 				SolutionDir = SolutionDir,
+				ProjectDir = ProjectDir,
 				Verbosity = "detailed",
 				InputFile = input,
 				BasePath = BasePath,
 				OutputDirectory = outputDirectory,
 				Symbols = true,
+				ExtraArguments = "-Prop Configuration=" + Configuration
 			};
 
 			VerifyOutput(task, false);
@@ -163,10 +175,12 @@ namespace OvermanGroup.NuGet.Packager.Test
 			{
 				BuildEngine = BuildEngine,
 				SolutionDir = SolutionDir,
+				ProjectDir = ProjectDir,
 				InputFile = input,
 				Verbosity = "detailed",
 				BasePath = BasePath,
-				OutputDirectory = outputDirectory
+				OutputDirectory = outputDirectory,
+				ExtraArguments = "-Prop Configuration=" + Configuration
 			};
 
 			var success = task.Execute();

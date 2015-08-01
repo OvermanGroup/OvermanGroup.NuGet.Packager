@@ -22,6 +22,18 @@ namespace OvermanGroup.NuGet.Packager.Test
 		protected string mProjectDir;
 		protected string mBasePath;
 
+		public virtual string Configuration
+		{
+			get
+			{
+#if DEBUG
+				return "Debug";
+#else
+				return "Release";
+#endif
+			}
+		}
+
 		public virtual TestContext TestContext
 		{
 			get { return TestContext.CurrentContext; }
