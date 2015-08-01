@@ -50,8 +50,7 @@ namespace OvermanGroup.NuGet.Packager.Test
 				SolutionDir = SolutionDir,
 				PackagePath = package,
 				Source = source,
-				Verbosity = "detailed",
-				PushArguments = "-Prop Configuration=" + Configuration
+				Verbosity = "detailed"
 			};
 
 			var success = task.Execute();
