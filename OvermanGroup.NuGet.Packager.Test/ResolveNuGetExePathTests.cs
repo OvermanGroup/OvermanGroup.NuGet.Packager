@@ -1,13 +1,13 @@
 ﻿using System;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NUnit.Framework;
 using OvermanGroup.NuGet.Packager.Tasks;
 
 namespace OvermanGroup.NuGet.Packager.Test
 {
-	[TestClass]
+	[TestFixture]
 	public class ResolveNuGetExePathTests : TestHelper
 	{
-		[TestMethod]
+		[Test]
 		public void TestExecuteTask()
 		{
 			var task = new ResolveNuGetExePath

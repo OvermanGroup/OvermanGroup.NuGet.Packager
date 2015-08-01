@@ -2,12 +2,12 @@
 using System.IO;
 using System.Reflection;
 using Microsoft.Build.Framework;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NUnit.Framework;
 using OvermanGroup.NuGet.Packager.Tasks;
 
 namespace OvermanGroup.NuGet.Packager.Test
 {
-	[TestClass]
+	[TestFixture]
 	public class PublishNuGetPackageTests : TestHelper
 	{
 		public virtual ITaskItem CreatePackageHelper()
@@ -37,11 +37,11 @@ namespace OvermanGroup.NuGet.Packager.Test
 			return package;
 		}
 
-		[TestMethod]
+		[Test]
 		public void PushToFolder()
 		{
 			var package = CreatePackageHelper();
-			var source = Path.Combine(TestContext.DeploymentDirectory, Guid.NewGuid().ToString("N"));
+			var source = Path.Combine(TestContext.WorkDirectory, Guid.NewGuid().ToString("N"));
 
 			var task = new PublishNuGetPackage
 			{

@@ -15,8 +15,6 @@ namespace OvermanGroup.NuGet.Packager.Tasks
 
 		public virtual string ApiKey { get; set; }
 
-		public virtual string Verbosity { get; set; }
-
 		public virtual string ConfigFile { get; set; }
 
 		public virtual string PushArguments { get; set; }
@@ -33,7 +31,6 @@ namespace OvermanGroup.NuGet.Packager.Tasks
 			logger("PackagePath", PackagePath);
 			logger("Source", Source);
 			logger("ApiKey", ApiKey);
-			logger("Verbosity", Verbosity);
 			logger("ConfigFile", ConfigFile);
 			logger("PushArguments", PushArguments);
 		}

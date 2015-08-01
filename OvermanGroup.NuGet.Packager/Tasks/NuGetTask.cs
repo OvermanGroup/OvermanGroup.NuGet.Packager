@@ -22,6 +22,9 @@ namespace OvermanGroup.NuGet.Packager.Tasks
 		[Required]
 		public virtual string SolutionDir { get; set; }
 
+		[Required]
+		public virtual string ProjectDir { get; set; }
+
 		public virtual string Verbosity { get; set; }
 
 		public virtual string NuGetExePath
@@ -105,7 +108,8 @@ namespace OvermanGroup.NuGet.Packager.Tasks
 			if (!String.IsNullOrEmpty(nuGetExePath) && File.Exists(nuGetExePath))
 				return nuGetExePath;
 
-			var resolver = new NuGetExeResolver(Logger, SolutionDir);
+			var downloadDir = Path.GetDirectoryName(BuildEngine.ProjectFileOfTaskNode);
+			var resolver = new NuGetExeResolver(Logger, SolutionDir, ProjectDir, downloadDir);
 			nuGetExePath = resolver.GetNuGetExePath();
 			mNuGetExePathResolved = nuGetExePath;
 
@@ -118,7 +122,9 @@ namespace OvermanGroup.NuGet.Packager.Tasks
 			LogArgumentHandler logger = (name, value) => Logger.LogMessage("{0}='{1}'", name, value);
 
 			Logger.LogMessage(separator);
+			logger("Verbosity", Verbosity);
 			logger("SolutionDir", SolutionDir);
+			logger("ProjectDir", ProjectDir);
 			logger("NuGetExePathSpecified", mNuGetExePathSpecified);
 			logger("NuGetExePathResolved", mNuGetExePathResolved);
 			LogArguments(logger);

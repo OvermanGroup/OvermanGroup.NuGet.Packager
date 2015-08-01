@@ -1,9 +1,10 @@
 using System;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Text;
 using CuttingEdge.Conditions;
-using NuGet.Packaging;
 
 namespace OvermanGroup.NuGet.Packager
 {
@@ -13,13 +14,21 @@ namespace OvermanGroup.NuGet.Packager
 
 		public virtual string SolutionDir { get; private set; }
 
-		public NuGetExeResolver(ILogger logger, string solutionDir)
+		public virtual string ProjectDir { get; private set; }
+
+		public virtual string DownloadDir { get; private set; }
+
+		public NuGetExeResolver(ILogger logger, string solutionDir, string projectDir, string downloadDir)
 		{
 			Condition.Requires(logger, "logger").IsNotNull();
 			Condition.Requires(solutionDir, "solutionDir").IsNotNullOrEmpty();
+			Condition.Requires(solutionDir, "projectDir").IsNotNullOrEmpty();
+			Condition.Requires(downloadDir, "downloadDir").IsNotNullOrEmpty();
 
 			Logger = logger;
 			SolutionDir = solutionDir;
+			ProjectDir = projectDir;
+			DownloadDir = downloadDir;
 		}
 
 		public virtual string GetNuGetExePath()
@@ -28,15 +37,21 @@ namespace OvermanGroup.NuGet.Packager
 
 			string nuGetExePath;
 
+			if (TryFromSystem(out nuGetExePath))
+			{
+				Logger.LogMessage("Found NuGet.exe from system at location '{0}'.", nuGetExePath);
+				return nuGetExePath;
+			}
+
 			if (TryFromPackages(out nuGetExePath))
 			{
 				Logger.LogMessage("Found NuGet.exe from packages at location '{0}'.", nuGetExePath);
 				return nuGetExePath;
 			}
 
-			if (TryFromSystem(out nuGetExePath))
+			if (TryFromDownload(out nuGetExePath))
 			{
-				Logger.LogMessage("Found NuGet.exe from system at location '{0}'.", nuGetExePath);
+				Logger.LogMessage("Found NuGet.exe from download at location '{0}'.", nuGetExePath);
 				return nuGetExePath;
 			}
 
@@ -60,35 +75,39 @@ namespace OvermanGroup.NuGet.Packager
 
 		public virtual bool TryFromPackages(out string nuGetExePath)
 		{
-			var packagesConfigPath = Path.Combine(SolutionDir, ".nuget", Constants.PackagesFileName);
-			if (!File.Exists(packagesConfigPath))
-			{
-				Logger.LogWarning("Unable to find '{0}'.", packagesConfigPath);
-				nuGetExePath = null;
-				return false;
-			}
-
-			var stream = File.OpenRead(packagesConfigPath);
-			var reader = new PackagesConfigReader(stream, false);
-
-			nuGetExePath = reader.GetPackages()
-				.Where(_ => _.PackageIdentity.Id == Constants.NuGetPackageName)
-				.OrderByDescending(_ => _.PackageIdentity.Version)
-				.Select(FormatNuGetExePath)
+			nuGetExePath = Directory
+				// search for the NuGet.CommandLine package
+				.EnumerateDirectories(Path.Combine(SolutionDir, "packages"), Constants.NuGetPackageName + ".*", SearchOption.TopDirectoryOnly)
+				// get the path to NuGet.exe
+				.Select(dir => Path.Combine(dir, "tools", Constants.NuGetFileName))
+				// make sure the file exists
 				.Where(File.Exists)
+				// sort descending by product version
+				.OrderByDescending(file => Version.Parse(FileVersionInfo.GetVersionInfo(file).ProductVersion))
+				// we only want the first result
 				.FirstOrDefault();
 
 			return !String.IsNullOrEmpty(nuGetExePath);
 		}
 
-		public virtual string FormatNuGetExePath(PackageReference packageReference)
+		public virtual bool TryFromDownload(out string nuGetExePath)
 		{
-			var packageIdentity = packageReference.PackageIdentity;
-			var path = Path.Combine(SolutionDir, "packages",
-				String.Format("{0}.{1}", packageIdentity.Id, packageIdentity.Version),
-				"tools", Constants.NuGetFileName);
-
-			return path;
+			var outputFile = Path.Combine(DownloadDir, "NuGet.exe");
+			using (var client = new WebClient())
+			{
+				try
+				{
+					client.DownloadFile("https://nuget.org/NuGet.exe", outputFile);
+				}
+				catch (Exception exception)
+				{
+					Debug.WriteLine(exception);
+					nuGetExePath = null;
+					return false;
+				}
+			}
+			nuGetExePath = outputFile;
+			return true;
 		}
 
 	}

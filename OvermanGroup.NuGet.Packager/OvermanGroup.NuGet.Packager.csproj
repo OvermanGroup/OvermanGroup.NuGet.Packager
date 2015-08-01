@@ -35,18 +35,6 @@
     </Reference>
     <Reference Include="Microsoft.Build.Framework" />
     <Reference Include="Microsoft.Build.Utilities.v4.0" />
-    <Reference Include="NuGet.Frameworks">
-      <HintPath>..\packages\NuGet.Packaging.1.0.0-master-43522145\lib\portable-net45+win\NuGet.Frameworks.dll</HintPath>
-    </Reference>
-    <Reference Include="NuGet.Packaging">
-      <HintPath>..\packages\NuGet.Packaging.1.0.0-master-43522145\lib\portable-net45+win\NuGet.Packaging.dll</HintPath>
-    </Reference>
-    <Reference Include="NuGet.PackagingCore">
-      <HintPath>..\packages\NuGet.Packaging.1.0.0-master-43522145\lib\portable-net45+win\NuGet.PackagingCore.dll</HintPath>
-    </Reference>
-    <Reference Include="NuGet.Versioning">
-      <HintPath>..\packages\NuGet.Versioning.1.0.3\lib\portable-net40+win\NuGet.Versioning.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml" />
@@ -77,7 +65,9 @@
       <SubType>Designer</SubType>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="packages.config" />
+    <None Include="packages.config">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="tools\Install.ps1">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
@@ -101,9 +91,8 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>SET TargetFolder=$(TargetDir)
-IF %25TargetFolder:~-1%25==\ SET TargetFolder=%25TargetFolder:~0,-1%25
-nuget pack "$(ProjectDir)$(TargetName).nuspec" -Verbosity detailed -NonInteractive -NoPackageAnalysis -OutputDirectory "%25TargetFolder%25" -BasePath "%25TargetFolder%25"</PostBuildEvent>
+    <PostBuildEvent>
+    </PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

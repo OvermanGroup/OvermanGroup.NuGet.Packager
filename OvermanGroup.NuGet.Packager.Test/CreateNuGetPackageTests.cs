@@ -1,15 +1,15 @@
 ﻿using System;
 using System.IO;
 using System.Reflection;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NUnit.Framework;
 using OvermanGroup.NuGet.Packager.Tasks;
 
 namespace OvermanGroup.NuGet.Packager.Test
 {
-	[TestClass]
+	[TestFixture]
 	public class CreateNuGetPackageTests : TestHelper
 	{
-		[TestMethod]
+		[Test]
 		public void FromProjectNoSymbols()
 		{
 			var name = Assembly.GetExecutingAssembly().GetName().Name;
@@ -30,7 +30,7 @@ namespace OvermanGroup.NuGet.Packager.Test
 			VerifyOutput(task, false);
 		}
 
-		[TestMethod]
+		[Test]
 		public void FromProjectWithSymbols()
 		{
 			var name = Assembly.GetExecutingAssembly().GetName().Name;
@@ -52,7 +52,7 @@ namespace OvermanGroup.NuGet.Packager.Test
 			VerifyOutput(task, true);
 		}
 
-		[TestMethod]
+		[Test]
 		public void FromProjectOverrideVersionNoSymbols()
 		{
 			var name = Assembly.GetExecutingAssembly().GetName().Name;
@@ -80,7 +80,7 @@ namespace OvermanGroup.NuGet.Packager.Test
 			VerifyOutput(task, false, version);
 		}
 
-		[TestMethod]
+		[Test]
 		public void FromProjectOverrideVersionWithSymbols()
 		{
 			var name = Assembly.GetExecutingAssembly().GetName().Name;
@@ -109,7 +109,7 @@ namespace OvermanGroup.NuGet.Packager.Test
 			VerifyOutput(task, true, version);
 		}
 
-		[TestMethod]
+		[Test]
 		public void FromNuSpecNoSymbols()
 		{
 			var name = Assembly.GetExecutingAssembly().GetName().Name;
@@ -130,7 +130,7 @@ namespace OvermanGroup.NuGet.Packager.Test
 			VerifyOutput(task, false);
 		}
 
-		[TestMethod]
+		[Test]
 		public void FromNuSpecWithSymbols()
 		{
 			var name = Assembly.GetExecutingAssembly().GetName().Name;
@@ -152,7 +152,7 @@ namespace OvermanGroup.NuGet.Packager.Test
 			VerifyOutput(task, true);
 		}
 
-		[TestMethod]
+		[Test]
 		public void FromNuSpecMissing()
 		{
 			var name = Assembly.GetExecutingAssembly().GetName().Name;

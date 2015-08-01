@@ -1,25 +1,42 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
-	<UsingTask TaskName="OvermanGroup.NuGet.Packager.Tasks.ResolveNuGetExePath" AssemblyFile="$(MSBuildThisFileDirectory).\OvermanGroup.NuGet.Packager.dll" />
-	<UsingTask TaskName="OvermanGroup.NuGet.Packager.Tasks.CreateNuGetPackage" AssemblyFile="$(MSBuildThisFileDirectory).\OvermanGroup.NuGet.Packager.dll" />
-	<UsingTask TaskName="OvermanGroup.NuGet.Packager.Tasks.PublishNuGetPackage" AssemblyFile="$(MSBuildThisFileDirectory).\OvermanGroup.NuGet.Packager.dll" />
+	<!--
+	We import the per-project properties here so that it's imported at the
+	last possible chance in order to allow the user to specify any additional
+	overrides ahead of time in their own csproj file.
+	-->
+	<Import Project="$(ProjectDir)\OvermanGroup.NuGet.Packager.props" Condition="Exists('$(ProjectDir)\OvermanGroup.NuGet.Packager.props')" />
+
+	<UsingTask TaskName="OvermanGroup.NuGet.Packager.Tasks.ResolveNuGetExePath" AssemblyFile="$(MSBuildThisFileDirectory)..\tools\OvermanGroup.NuGet.Packager.dll" />
+	<UsingTask TaskName="OvermanGroup.NuGet.Packager.Tasks.CreateNuGetPackage" AssemblyFile="$(MSBuildThisFileDirectory)..\tools\OvermanGroup.NuGet.Packager.dll" />
+	<UsingTask TaskName="OvermanGroup.NuGet.Packager.Tasks.PublishNuGetPackage" AssemblyFile="$(MSBuildThisFileDirectory)..\tools\OvermanGroup.NuGet.Packager.dll" />
 
 	<PropertyGroup>
 		<!--
-			We use PrepareForRunDependsOn vs BuildDependsOn in order to leverage
-			cleaning of the generated package files.
+		We use PrepareForRunDependsOn vs BuildDependsOn in order to leverage
+		cleaning of the generated package files.
 		-->
 		<PrepareForRunDependsOn>
 			$(PrepareForRunDependsOn);
-			OverPack
+			OverPack;
 		</PrepareForRunDependsOn>
+
+		<!--
+		The following can also be used to modify the build process with additional
+		targets.
+		-->
+		<OverPackDependsOn>
+			BeforeOverPack;
+			CoreOverPack;
+			AfterOverPack;
+		</OverPackDependsOn>
 	</PropertyGroup>
 
 	<!--
-		Changes to these MSBuild properties should be made either in the local
-		'OvermanGroup.NuGet.Packager.props' file that was added to your project
-		or in a TFS build definition.
+	Changes to these MSBuild properties should be made either in the local
+	'OvermanGroup.NuGet.Packager.props' file that was added to your project
+	or in a TFS build definition.
 	-->
 	<PropertyGroup>
 		<RunOverPack Condition="'$(RunOverPack)'==''">false</RunOverPack>
@@ -27,6 +44,7 @@
 		<OverPackNuGetExePath Condition="'$(OverPackNuGetExePath)' == ''"></OverPackNuGetExePath>
 		<OverPackInputFile Condition="'$(OverPackInputFile)' == ''">$(ProjectPath)</OverPackInputFile>
 		<OverPackSolutionDir Condition="'$(OverPackSolutionDir)' == ''">$(SolutionDir)</OverPackSolutionDir>
+		<OverPackProjectDir Condition="'$(OverPackProjectDir)' == ''">$(ProjectDir)</OverPackProjectDir>
 		<OverPackProjectPath Condition="'$(OverPackProjectPath)' == ''">$(ProjectPath)</OverPackProjectPath>
 		<OverPackOutputDirectory Condition="'$(OverPackOutputDirectory)' == ''">$(TargetDir)</OverPackOutputDirectory>
 		<OverPackBasePath Condition="'$(OverPackBasePath)' == ''">$(TargetDir)</OverPackBasePath>
@@ -49,14 +67,6 @@
 		<OverPackPublishArguments Condition="'$(OverPackPublishArguments)' == ''"></OverPackPublishArguments>
 	</PropertyGroup>
 
-	<PropertyGroup>
-		<OverPackDependsOn>
-			BeforeOverPack;
-			CoreOverPack;
-			AfterOverPack
-		</OverPackDependsOn>
-	</PropertyGroup>
-
 	<Target Name="OverPack" Condition="$(RunOverPack)" DependsOnTargets="$(OverPackDependsOn)" />
 
 	<!-- Redefine this target in your project in order to run tasks just before OverPack -->
@@ -74,6 +84,7 @@
 		<CreateNuGetPackage
 			NuGetExePath="$(OverPackNuGetExePath)"
 			SolutionDir="$(OverPackSolutionDir)"
+			ProjectDir="$(OverPackProjectDir)"
 			InputFile="$(OverPackInputFile)"
 			OutputDirectory="$(OverPackOutputDirectory)"
 			BasePath="$(OverPackBasePath)"
@@ -97,6 +108,7 @@
 			Condition="'$(OverPackPublishToFolder)' != ''"
 			NuGetExePath="$(OverPackNuGetExePath)"
 			SolutionDir="$(OverPackSolutionDir)"
+			ProjectDir="$(OverPackProjectDir)"
 			PackagePath="@(OverPackOutputFile)"
 			Source="$(OverPackPublishToFolder)"
 			ApiKey="$(OverPackPublishApiKey)"
@@ -109,6 +121,7 @@
 			Condition="'$(OverPackPublishToHttp)' != ''"
 			NuGetExePath="$(OverPackNuGetExePath)"
 			SolutionDir="$(OverPackSolutionDir)"
+			ProjectDir="$(OverPackProjectDir)"
 			PackagePath="@(OverPackOutputFile)"
 			Source="$(OverPackPublishToHttp)"
 			ApiKey="$(OverPackPublishApiKey)"

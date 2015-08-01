@@ -11,7 +11,8 @@
     <AssemblyName>OvermanGroup.NuGet.Packager.Example</AssemblyName>
     <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <NuGetPackageImportStamp>d4913cdc</NuGetPackageImportStamp>
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -46,9 +47,13 @@
     <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <Target Name="OverPackBookmark" />
-  <Import Project="OvermanGroup.NuGet.Packager.props" Condition="Exists('OvermanGroup.NuGet.Packager.props')" />
-  <Import Project="..\packages\OvermanGroup.NuGet.Packager.1.1.0\build\OvermanGroup.NuGet.Packager.targets" Condition="Exists('..\packages\OvermanGroup.NuGet.Packager.1.1.0\build\OvermanGroup.NuGet.Packager.targets')" />
+  <Import Project="..\packages\OvermanGroup.NuGet.Packager.1.2.0\build\OvermanGroup.NuGet.Packager.targets" Condition="Exists('..\packages\OvermanGroup.NuGet.Packager.1.2.0\build\OvermanGroup.NuGet.Packager.targets')" />
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\packages\OvermanGroup.NuGet.Packager.1.2.0\build\OvermanGroup.NuGet.Packager.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\OvermanGroup.NuGet.Packager.1.2.0\build\OvermanGroup.NuGet.Packager.targets'))" />
+  </Target>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
@@ -62,19 +67,20 @@
   <Target Name="AfterBuild">
     <Message Text="Running AfterBuild" Importance="high" />
   </Target>
+  <!-- These targets must be after the OverPack Import -->
   <Target Name="BeforeOverPack">
     <Message Text="Running BeforeOverPack" Importance="high" />
   </Target>
   <Target Name="AfterOverPack">
-	<Message Text="Running AfterOverPack: @(OverPackOutputFile)" Importance="high" Condition="Exists('@(OverPackOutputFile)')" />
-	<Message Text="Running AfterOverPack: @(OverPackSymbolsFile)" Importance="high" Condition="Exists('@(OverPackSymbolsFile)')" />
+    <Message Text="Running AfterOverPack: @(OverPackOutputFile)" Importance="high" Condition="Exists('@(OverPackOutputFile)')" />
+    <Message Text="Running AfterOverPack: @(OverPackSymbolsFile)" Importance="high" Condition="Exists('@(OverPackSymbolsFile)')" />
   </Target>
   <Target Name="BeforeOverPackDependsOn">
     <Message Text="Running BeforeOverPackDependsOn" Importance="high" />
   </Target>
   <Target Name="AfterOverPackDependsOn">
-	<Message Text="Running AfterOverPackDependsOn: @(OverPackOutputFile)" Importance="high" Condition="Exists('@(OverPackOutputFile)')" />
-	<Message Text="Running AfterOverPackDependsOn: @(OverPackSymbolsFile)" Importance="high" Condition="Exists('@(OverPackSymbolsFile)')" />
+    <Message Text="Running AfterOverPackDependsOn: @(OverPackOutputFile)" Importance="high" Condition="Exists('@(OverPackOutputFile)')" />
+    <Message Text="Running AfterOverPackDependsOn: @(OverPackSymbolsFile)" Importance="high" Condition="Exists('@(OverPackSymbolsFile)')" />
   </Target>
   <PropertyGroup>
     <OverPackDependsOn>
@@ -83,10 +89,4 @@
       AfterOverPackDependsOn
     </OverPackDependsOn>
   </PropertyGroup>
-  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
-    <PropertyGroup>
-      <ErrorText>This project references NuGet package(s) that are missing on this computer. Enable NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
-    </PropertyGroup>
-    <Error Condition="!Exists('..\packages\OvermanGroup.NuGet.Packager.1.1.0\build\OvermanGroup.NuGet.Packager.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\OvermanGroup.NuGet.Packager.1.1.0\build\OvermanGroup.NuGet.Packager.targets'))" />
-  </Target>
 </Project>

@@ -3,11 +3,11 @@
 	<metadata minClientVersion="2.8">
 		<id>OvermanGroup.NuGet.Packager</id>
 		<title>OvermanGroup.NuGet.Packager</title>
-		<version>1.1.0</version>
+		<version>1.2.0</version>
 
 		<owners>Overman Group, LLC.</owners>
 		<authors>Overman Group, LLC.</authors>
-		<copyright>Copyright © 2014 Overman Group, LLC. All rights reserved.</copyright>
+		<copyright>Copyright © 2015 Overman Group, LLC. All rights reserved.</copyright>
 
 		<iconUrl>https://raw.githubusercontent.com/OvermanGroup/OvermanGroup.NuGet.Packager/master/PackageIcon.png</iconUrl>
 		<projectUrl>https://github.com/OvermanGroup/OvermanGroup.NuGet.Packager</projectUrl>
@@ -20,22 +20,22 @@
 
 		<releaseNotes>
 			<![CDATA[
+v1.2.0 - VS2015 upgrade and TeamCity build.
 v1.1.0 - Added OverPackDependsOn and support for cleaning of generated files.
 v1.0.1 - Improved scripts and updated metadata (description, icon, and readme).
 v1.0.0 - Initial release.
 ]]>
 		</releaseNotes>
 
-		<dependencies>
-			<dependency id="NuGet.CommandLine" version="[2.8.3,)" />
-		</dependencies>
 		<developmentDependency>true</developmentDependency>
 	</metadata>
 	<files>
-		<file src="OvermanGroup.NuGet.Packager.props" target="content" />
 		<file src="OvermanGroup.NuGet.Packager.targets" target="build" />
-		<file src="*.dll" target="build" />
+		<file src="OvermanGroup.NuGet.Packager.props" target="content" />
+
 		<file src="tools\*" target="tools" />
+		<file src="*.dll" target="tools" />
+
 		<file src="COPYRIGHT.txt" />
 		<file src="LICENSE.txt" />
 	</files>

@@ -3,15 +3,14 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using Microsoft.Build.Framework;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using NuGet.Packaging;
-using NuGet.PackagingCore;
+using NUnit.Framework;
 using OvermanGroup.NuGet.Packager.Tasks;
 
 namespace OvermanGroup.NuGet.Packager.Test
 {
-	[TestClass]
+	[TestFixture]
 	public abstract class TestHelper
 	{
 		protected const string ExpectedVersion = "1.1.0-test";
@@ -20,9 +19,13 @@ namespace OvermanGroup.NuGet.Packager.Test
 		protected Mock<IBuildEngine> mBuildEngineMock;
 		protected ILogger mLogger;
 		protected string mSolutionDir;
+		protected string mProjectDir;
 		protected string mBasePath;
 
-		public virtual TestContext TestContext { get; set; }
+		public virtual TestContext TestContext
+		{
+			get { return TestContext.CurrentContext; }
+		}
 
 		public virtual IBuildEngine BuildEngine
 		{
@@ -39,21 +42,57 @@ namespace OvermanGroup.NuGet.Packager.Test
 			get { return mSolutionDir ?? (mSolutionDir = GetSolutionDir()); }
 		}
 
+		public virtual string ProjectDir
+		{
+			get { return mProjectDir ?? (mProjectDir = GetProjectDir()); }
+		}
+
 		public virtual string BasePath
 		{
 			get { return mBasePath ?? (mBasePath = GetBasePath()); }
 		}
 
-		[TestInitialize]
+		[SetUp]
 		public virtual void HelperInitialize()
 		{
-			mBuildEngineMock = new Mock<IBuildEngine>(MockBehavior.Loose);
+			mBuildEngineMock = new Mock<IBuildEngine>(MockBehavior.Strict);
+
 			mBuildEngineMock
 				.Setup(_ => _.LogMessageEvent(It.IsAny<BuildMessageEventArgs>()))
 				.Callback((BuildMessageEventArgs msg) => OnLogMessageEvent(msg));
+
+			mBuildEngineMock
+				.Setup(_ => _.LogWarningEvent(It.IsAny<BuildWarningEventArgs>()))
+				.Callback((BuildWarningEventArgs msg) => OnLogWarningEvent(msg));
+
+			mBuildEngineMock
+				.Setup(_ => _.LogErrorEvent(It.IsAny<BuildErrorEventArgs>()))
+				.Callback((BuildErrorEventArgs msg) => OnLogErrorEvent(msg));
+
+			mBuildEngineMock
+				.SetupGet(_ => _.ProjectFileOfTaskNode)
+				.Returns(Path.Combine(TestContext.WorkDirectory, "anything.txt"));
+
+			mBuildEngineMock
+				.SetupGet(_ => _.LineNumberOfTaskNode)
+				.Returns(0);
+
+			mBuildEngineMock
+				.SetupGet(_ => _.ColumnNumberOfTaskNode)
+				.Returns(0);
 		}
 
 		protected virtual void OnLogMessageEvent(BuildMessageEventArgs msg)
+		{
+			Console.WriteLine(msg.Message);
+		}
+
+		protected virtual void OnLogWarningEvent(BuildWarningEventArgs msg)
+		{
+			Console.WriteLine(msg.Message);
+		}
+
+		protected virtual void OnLogErrorEvent(BuildErrorEventArgs msg)
 		{
 			Console.WriteLine(msg.Message);
 		}
@@ -71,6 +110,22 @@ namespace OvermanGroup.NuGet.Packager.Test
 				exists = File.Exists(path);
 			}
 			Assert.IsTrue(exists, "Checking if the solution directory was found ");
+			return dir;
+		}
+
+		private static string GetProjectDir()
+		{
+			var dir = Environment.CurrentDirectory;
+			var name = Assembly.GetExecutingAssembly().GetName().Name + ".csproj";
+			var path = Path.Combine(dir, name);
+			var exists = File.Exists(path);
+			while (!exists && !String.IsNullOrEmpty(dir))
+			{
+				dir = Path.GetDirectoryName(dir);
+				path = Path.Combine(dir ?? String.Empty, name);
+				exists = File.Exists(path);
+			}
+			Assert.IsTrue(exists, "Checking if the project directory was found ");
 			return dir;
 		}
 
@@ -94,8 +149,8 @@ namespace OvermanGroup.NuGet.Packager.Test
 		public virtual string PrepareOutputDirectory()
 		{
 			// so that the test cases don't collide with each other, place the output packages in separate folders
-			var baseDir = TestContext.DeploymentDirectory;
-			var dir = Path.Combine(baseDir, TestContext.TestName);
+			var baseDir = TestContext.WorkDirectory;
+			var dir = Path.Combine(baseDir, TestContext.Test.Name);
 			Directory.CreateDirectory(dir);
 			return dir;
 		}
@@ -128,16 +183,13 @@ namespace OvermanGroup.NuGet.Packager.Test
 			Assert.IsFalse(String.IsNullOrEmpty(path), "Checking if the path is null or empty");
 			Assert.IsTrue(File.Exists(path), "Checking if the path exists");
 
-			TestContext.AddResultFile(path);
-
 			return path;
 		}
 
 		public virtual void VerifyPackageVersion(string packagePath, string expectedVersion)
 		{
 			using (var stream = File.OpenRead(packagePath))
-			using (var fileSystem = new ZipFileSystem(stream))
-			using (var reader = new PackageReader(fileSystem))
+			using (var reader = new PackageReader(stream))
 			{
 				var identity = reader.GetIdentity();
 				var actualVersion = identity.Version.ToNormalizedString();
