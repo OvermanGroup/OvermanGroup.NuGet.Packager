@@ -4,7 +4,7 @@
 		<id>OvermanGroup.NuGet.Packager</id>
 		<title>OvermanGroup.NuGet.Packager</title>
 
-		<version>$version$</version>
+		<version>1.2.0</version>
 
 		<owners>Overman Group, LLC.</owners>
 		<authors>Overman Group, LLC.</authors>
