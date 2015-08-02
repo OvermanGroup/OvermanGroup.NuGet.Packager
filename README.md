@@ -31,9 +31,9 @@ Below is the minimal configuration required for ``OvermanGroup.NuGet.Packager.pr
 ```xml
 <?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-	<PropertyGroup>
-		<RunOverPack Condition="'$(RunOverPack)'==''">true</RunOverPack>
-	</PropertyGroup>
+  <PropertyGroup>
+    <RunOverPack Condition="'$(RunOverPack)'==''">true</RunOverPack>
+  </PropertyGroup>
 </Project>
 ```
 
@@ -45,8 +45,9 @@ By default, all the tasks are disabled and you must explicitly enable them by sp
 
 ### OverPackNuGetExePath
 Specifies the location for the NuGet.exe command. The default behavior is to check the following in order:
-* The latest version of [NuGet.CommandLine][1] (under the 'tools' subfolder) in the solution packages folder.
 * Attempting to find 'NuGet.exe' in the system's PATH environment variable by using the [SearchPath][2] Win32 API.
+* The latest version of [NuGet.CommandLine][1] (under the 'tools' subfolder) in the solution packages folder.
+* Downloading the latest version from the [NuGet.org] website.
 
 Usually one of these methods will always succeed, but if any of the above fail, then the user must specify the location of the NuGet.exe command with this property.
 ```xml
@@ -167,6 +168,17 @@ Specifies any additional arguments to pass to NuGet when invoking the 'push' com
 ```xml
 <OverPackPublishArguments Condition="'$(OverPackPublishArguments)' == ''"></OverPackPublishArguments>
 ```
+
+## LOGGING
+To see exactly what the custom MSBuild targets are doing or to diagnose any issues with the NuGet command, logging can be enabled in 2 different places.
+
+via an MSBuild property for OctoPack:
+```xml
+<OverPackVerbosity Condition="'$(OverPackVerbosity)' == ''">normal</OverPackVerbosity>
+```
+
+via Visual Studio options for MSBuild:
+![MSBuild Logging](images/MSBuildLogging.png?raw=true)
 
 ## BUILD EVENTS
 Custom targets for pre/post build events may be added by using either the predefined `BeforeOverPack` and `AfterOverPack` targets or by modifying the `OverPackDependsOn` property with custom targets. These custom pre/post build targets **MUST** be defined after the `import` statement for the package. See the example below:
