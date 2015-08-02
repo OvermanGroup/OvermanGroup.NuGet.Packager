@@ -47,7 +47,7 @@ By default, all the tasks are disabled and you must explicitly enable them by sp
 Specifies the location for the NuGet.exe command. The default behavior is to check the following in order:
 * Attempting to find 'NuGet.exe' in the system's PATH environment variable by using the [SearchPath][2] Win32 API.
 * The latest version of [NuGet.CommandLine][1] (under the 'tools' subfolder) in the solution packages folder.
-* Downloading the latest version from the [[NuGet.org]] website.
+* Downloading the latest version from the [NuGet.org][9] website.
 
 Usually one of these methods will always succeed, but if any of the above fail, then the user must specify the location of the NuGet.exe command with this property.
 ```xml
@@ -241,3 +241,4 @@ So "Overman Group" is an LLC that I created in college with the intent to someda
 [6]: http://msdn.microsoft.com/en-us/library/hh850448.aspx
 [7]: https://github.com/OvermanGroup/OvermanGroup.NuGet.Packager/issues
 [8]: https://www.nuget.org/packages/OvermanGroup.NuGet.Packager/
+[9]: https://www.nuget.org/nuget.exe

@@ -16,8 +16,9 @@
 		<OverPackNuGetExePath Condition="'$(OverPackNuGetExePath)' == ''"></OverPackNuGetExePath>
 			Specifies the location for the NuGet.exe command. The default behavior is
 			to check the following in order:
-			1) The latest version of 'NuGet.CommandLine' (under the 'tools' subfolder) in the solution packages folder.
-			2) Attempting to find 'NuGet.exe' in the system's PATH environment variable by using the SearchPath Win32 API.
+			1) Attempting to find 'NuGet.exe' in the system's PATH environment variable by using the SearchPath Win32 API.
+			2) The latest version of 'NuGet.CommandLine' (under the 'tools' subfolder) in the solution packages folder.
+			3) Downloading the latest version from the NuGet.org website.
 			Usually one of these methods will always succeed, but if any of the above
 			fail, then the user must specify the location of the NuGet.exe command
 			with this property.
