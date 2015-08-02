@@ -47,7 +47,7 @@ By default, all the tasks are disabled and you must explicitly enable them by sp
 Specifies the location for the NuGet.exe command. The default behavior is to check the following in order:
 * Attempting to find 'NuGet.exe' in the system's PATH environment variable by using the [SearchPath][2] Win32 API.
 * The latest version of [NuGet.CommandLine][1] (under the 'tools' subfolder) in the solution packages folder.
-* Downloading the latest version from the [NuGet.org] website.
+* Downloading the latest version from the [[NuGet.org]] website.
 
 Usually one of these methods will always succeed, but if any of the above fail, then the user must specify the location of the NuGet.exe command with this property.
 ```xml
@@ -172,7 +172,7 @@ Specifies any additional arguments to pass to NuGet when invoking the 'push' com
 ## LOGGING
 To see exactly what the custom MSBuild targets are doing or to diagnose any issues with the NuGet command, logging can be enabled in 2 different places.
 
-via an MSBuild property for OctoPack:
+via a MSBuild property for OctoPack:
 ```xml
 <OverPackVerbosity Condition="'$(OverPackVerbosity)' == ''">normal</OverPackVerbosity>
 ```
